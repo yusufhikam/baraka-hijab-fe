@@ -1,18 +1,18 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import createAddress from "../api/addresses/createAddress"
-import { AddressType, AddressTypePayload } from "../../types/AddressType"
-import ToastSweetAlert from "../../components/elements/Alert/Toast/ToastSweetAlert";
-import deleteAddress from "../api/addresses/deleteAddress";
-import { useMemo, useState } from "react";
-import getAddress from "../api/addresses/getAddress";
-import setPrimaryAddress from "../api/addresses/setPrimaryAddress";
-import { getProvince } from "../api/CekOngkir/getProvince";
-import updateAddress from "../api/addresses/updateAddress";
-import getAddressById from "../api/addresses/getAddressById";
-import { getKabupaten } from "../api/CekOngkir/getKabupaten";
-import { getKecamatans } from "../api/CekOngkir/getKecamatan";
-import { getKelurahan } from "../api/CekOngkir/getKelurahan";
-
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import createAddress from '../api/addresses/createAddress'
+import { AddressType, AddressTypePayload } from '../../types/AddressType'
+import ToastSweetAlert from '../../components/elements/Alert/Toast/ToastSweetAlert'
+import deleteAddress from '../api/addresses/deleteAddress'
+import { useMemo, useState } from 'react'
+import getAddress from '../api/addresses/getAddress'
+import setPrimaryAddress from '../api/addresses/setPrimaryAddress'
+import { getProvince } from '../api/CekOngkir/getProvince'
+import updateAddress from '../api/addresses/updateAddress'
+import getAddressById from '../api/addresses/getAddressById'
+import { getKabupaten } from '../api/CekOngkir/getKabupaten'
+import { getKecamatans } from '../api/CekOngkir/getKecamatan'
+import { getKelurahan } from '../api/CekOngkir/getKelurahan'
+import { useForm } from 'react-hook-form'
 
 // GET DATA ADDRESS
 
@@ -28,53 +28,53 @@ export const useGetAddress = () => {
 
 // POST DATA ADDRESS
 export const useCreateAddress = () => {
-    const queryClient = useQueryClient();
+    const queryClient = useQueryClient()
+    const { reset } = useForm()
 
-
-    const { mutate, isPending: loadingCreateAddress } = useMutation({
+    const {
+        mutate: storeAddress,
+        isPending: isLoadingStoreAddress,
+        isSuccess: isSuccessAddAddress,
+    } = useMutation({
         mutationFn: (data: AddressTypePayload) => createAddress(data),
         onSuccess: () => {
             ToastSweetAlert({
                 iconToast: 'success',
-                titleToast: 'Success add address',
+                titleToast: 'Address has been added',
             })
             queryClient.invalidateQueries({ queryKey: ['addresses'] })
+            reset() // resetting form input
         },
         onError: () => {
             ToastSweetAlert({
                 iconToast: 'error',
-                titleToast: 'Failed add address',
+                titleToast: 'Failed to add an address',
             })
-        }
+        },
     })
-
-
-    // const onSubmit = (data: AddressTypePayload) => mutate(data);
-
-    return { mutate, loadingCreateAddress }
+    return { storeAddress, isLoadingStoreAddress, isSuccessAddAddress }
 }
 // END POST DATA ADDRESS
 
-
 // DELETE DATA ADDRESS
 export const useDeleteAddress = () => {
-    const queryClient = useQueryClient();
+    const queryClient = useQueryClient()
 
     const { mutate, isPending: loadingDeleteAddress } = useMutation({
         mutationFn: (addressId: number) => deleteAddress(addressId),
         onSuccess: () => {
             ToastSweetAlert({
                 iconToast: 'success',
-                titleToast: 'Success delete address',
-            });
+                titleToast: 'Address successfully deleted',
+            })
             queryClient.invalidateQueries({ queryKey: ['addresses'] })
         },
         onError: () => {
             ToastSweetAlert({
                 iconToast: 'error',
-                titleToast: 'Failed delete address',
+                titleToast: 'Failed to delete address',
             })
-        }
+        },
     })
 
     return { mutate, loadingDeleteAddress }
@@ -112,31 +112,37 @@ export const useSetPrimaryAddress = () => {
         },
     })
 
-
     return {
         setMainAddress,
         isPending,
         openMenuAction,
-        setOpenMenuAction
+        setOpenMenuAction,
     }
 }
 // END SET MAIN ADDRESS
 
+export const useAddressDetail = (
+    formFor: 'edit' | 'add',
+    addressId: AddressType['id']
+) => {
+    const isEdit = formFor === 'edit' && !!addressId
 
-export const useAddressDetail = (formFor: 'edit' | 'add', addressId: AddressType['id']) => {
-    const isEdit = formFor === 'edit' && !!addressId;
-
-    const { data: addressData, isLoading: isLoadingAddress, isSuccess, refetch } = useQuery({
+    const {
+        data: addressData,
+        isLoading: isLoadingAddress,
+        isSuccess,
+        refetch,
+    } = useQuery({
         queryKey: ['address', addressId],
         queryFn: () => getAddressById(addressId),
-        enabled: isEdit
+        enabled: isEdit,
     })
 
     const wilayahName = {
         provinsi: addressData?.provinsi,
         kabupaten: addressData?.kabupaten,
         kecamatan: addressData?.kecamatan,
-        kelurahan: addressData?.kelurahan
+        kelurahan: addressData?.kelurahan,
     }
     // GET DATA PROVINCE
     const { data: provinces, isLoading: isLoadingProvinces } = useQuery({
@@ -145,71 +151,112 @@ export const useAddressDetail = (formFor: 'edit' | 'add', addressId: AddressType
     })
 
     const provinceCode = useMemo(() => {
-        return provinces?.find((prov) => prov.name === wilayahName.provinsi)?.code || ''
+        return (
+            provinces?.find((prov) => prov.name === wilayahName.provinsi)
+                ?.code || ''
+        )
     }, [provinces, wilayahName.provinsi])
 
     // GET DATA KABUPATEN
-    const { data: kabupatens, isLoading: isLoadingKabupaten, refetch: refetchKabupaten } = useQuery({
+    const {
+        data: kabupatens,
+        isLoading: isLoadingKabupaten,
+        refetch: refetchKabupaten,
+    } = useQuery({
         queryKey: ['kabupatens', provinceCode],
         queryFn: () => getKabupaten(provinceCode!),
-        enabled: !!provinceCode
-    });
+        enabled: !!provinceCode,
+    })
 
     const kabupatenCode = useMemo(() => {
-        return kabupatens?.find(kab => kab.name === wilayahName.kabupaten)?.code || ''
+        return (
+            kabupatens?.find((kab) => kab.name === wilayahName.kabupaten)
+                ?.code || ''
+        )
     }, [kabupatens, wilayahName.kabupaten])
 
     // GET DATA KECAMATAN
     const { data: kecamatans, isLoading: isLoadingKecamatan } = useQuery({
         queryKey: ['kecamatans', kabupatenCode],
         queryFn: () => getKecamatans(kabupatenCode!),
-        enabled: !!kabupatenCode
-    });
+        enabled: !!kabupatenCode,
+    })
 
     const kecamatanCode = useMemo(() => {
-        return kecamatans?.find(kec => kec.name === wilayahName.kecamatan)?.code
+        return kecamatans?.find((kec) => kec.name === wilayahName.kecamatan)
+            ?.code
     }, [kecamatans, wilayahName.kecamatan])
 
     // GET DATA KELURAHAN
     const { data: kelurahans, isLoading: isLoadingKelurahan } = useQuery({
         queryKey: ['kelurahans', kecamatanCode],
         queryFn: () => getKelurahan(kecamatanCode!),
-        enabled: !!kecamatanCode
-    });
+        enabled: !!kecamatanCode,
+    })
 
     const kelurahanCode = useMemo(() => {
-        return kelurahans?.find(kel => kel.name === wilayahName.kelurahan)?.code
+        return kelurahans?.find((kel) => kel.name === wilayahName.kelurahan)
+            ?.code
     }, [kelurahans, wilayahName.kelurahan])
 
-    const isLoadingData = isEdit && (isLoadingAddress || isLoadingProvinces || isLoadingKabupaten || isLoadingKecamatan || isLoadingKelurahan)
+    const isLoadingData =
+        isEdit &&
+        (isLoadingAddress ||
+            isLoadingProvinces ||
+            isLoadingKabupaten ||
+            isLoadingKecamatan ||
+            isLoadingKelurahan)
     const wilayahCode = {
         provinsi: provinceCode,
         kabupaten: kabupatenCode,
         kecamatan: kecamatanCode,
-        kelurahan: kelurahanCode
+        kelurahan: kelurahanCode,
     }
-
-
-    return { addressData, isSuccess, refetch, wilayahCode, isLoadingData, refetchKabupaten }
-}
-
-export const useUpdateAddress = () => {
-
-
-    // get address data 
-    const { data: provinces } = useQuery({
-        queryKey: ['provinsces'],
-        queryFn: () => getProvince(),
-    })
-
-    // const { } = useMutation({
-    //     mutationFn: (addressId: number) => updateAddress({ addressId, })
-    // })
-
-
 
     return {
-        provinces,
+        addressData,
+        isSuccess,
+        refetch,
+        wilayahCode,
+        isLoadingData,
+        refetchKabupaten,
     }
 }
 
+export const useUpdateAddress = (onSuccessCallback?: () => void) => {
+    const queryClient = useQueryClient()
+
+    const { mutate: updateAddressData, isPending: isLoadingUpdate } =
+        useMutation({
+            mutationFn: ({
+                addressId,
+                data,
+            }: {
+                addressId: number | undefined
+                data: AddressTypePayload
+            }) => updateAddress({ addressId, data }),
+            onSuccess: () => {
+                ToastSweetAlert({
+                    iconToast: 'success',
+                    titleToast: 'Address successfully updated',
+                })
+                queryClient.invalidateQueries({ queryKey: ['addresses'] })
+
+                // close modal edit
+                if (onSuccessCallback) {
+                    onSuccessCallback()
+                }
+            },
+            onError: () => {
+                ToastSweetAlert({
+                    iconToast: 'error',
+                    titleToast: 'Address failed to update',
+                })
+            },
+        })
+
+    return {
+        updateAddressData,
+        isLoadingUpdate,
+    }
+}

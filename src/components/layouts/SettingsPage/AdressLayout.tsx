@@ -1,21 +1,64 @@
 import Breadcrumb from '../../fragments/Breadcrumb/Breadcrumb'
-import { Loader, Plus } from 'lucide-react'
+import { Loader2, Plus } from 'lucide-react'
 import useDarkMode from '../../../utililties/customHook/useDarkMode'
 import Button from '../../elements/Button/Button'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import H1 from '../../elements/Title Header/H1'
-import FormAddress from './FormAddress'
 import Modal from '../../elements/Modal/Modal'
-import { useGetAddress } from '../../../utililties/customHook/useAddressMutation'
-import AddressCardList from './AddressCardList'
-import FormAddress2 from '../../fragments/SettingsPage/FormAddress2'
+import {
+    useCreateAddress,
+    useDeleteAddress,
+    useGetAddress,
+    useUpdateAddress,
+} from '../../../utililties/customHook/useAddressMutation'
+import { AddressType, AddressTypePayload } from '../../../types/AddressType'
+import AddressList from './AddressList'
+import ToastDeleteConfirmation from '../../elements/Alert/Toast/ToastDeleteConfirmation'
+import FormAddress from './FormAddress'
 
 const AddressLayout = () => {
     const { isDarkMode } = useDarkMode()
     const [openModalAdd, setOpenModalAdd] = useState<boolean>(false)
+    const [selectedEdit, setSelectedEdit] = useState<{
+        isOpen: boolean
+        address: AddressType | null
+    }>({ isOpen: false, address: null })
+    const { storeAddress, isLoadingStoreAddress } = useCreateAddress()
+    const { updateAddressData } = useUpdateAddress(() =>
+        setSelectedEdit({ isOpen: false, address: null })
+    )
+    const { mutate: onDelete } = useDeleteAddress()
 
-    // GET DATA ADDRESS
+    // ✅ GET DATA ADDRESS
     const { addresses, isLoadingAddresses } = useGetAddress()
+    //✅ handle Add Address
+    const handleCreateAddress = useCallback(
+        (data: AddressTypePayload) => {
+            storeAddress(data)
+        },
+        [storeAddress]
+    )
+    // ♻️ handle update address
+    const handleUpdateAddress = useCallback(
+        (data: AddressTypePayload) => {
+            updateAddressData({ addressId: selectedEdit.address?.id, data })
+        },
+        [updateAddressData, selectedEdit]
+    )
+    // ❌ DELETE ADDRESS
+    const handleDeleteAddress = useCallback(
+        (addressId: number) => {
+            ToastDeleteConfirmation({
+                deleteFn: () => onDelete(addressId),
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                confirmedButtonText: 'Yes, delete it!',
+                deleteSuccessText: 'Address deleted successfully',
+            })
+        },
+        [onDelete]
+    )
 
     return (
         <div className="p-5">
@@ -44,9 +87,13 @@ const AddressLayout = () => {
                 <div
                     className={`form hidden h-1/2 rounded-md p-5 shadow-md md:block md:w-[35%] lg:w-[28%] ${isDarkMode ? 'bg-zinc-700' : 'bg-white'}`}
                 >
+                    {/* ADD ADDRESS FORM */}
                     <H1>Add an address</H1>
-                    {/* <FormAddress formFor="add" variantClass="mt-5" /> */}
-                    <FormAddress2 />
+                    <FormAddress
+                        isLoading={isLoadingStoreAddress}
+                        onSubmit={handleCreateAddress}
+                        formFor="add"
+                    />
                 </div>
                 {/* END LEFT SECTION */}
 
@@ -55,14 +102,14 @@ const AddressLayout = () => {
                     className={`address-list relative flex h-fit flex-col md:w-[60%] lg:w-[70%] ${isDarkMode ? 'bg-zinc-700' : 'bg-white'} rounded-md p-5 shadow-md`}
                 >
                     <div className="absolute top-2 right-2 md:hidden">
+                        {/* OPEN MODAL ADD ADDRESS */}
                         <Button
                             variant={`bg-barakaprimary-dessert text-zinc-800 hover:text-white hover:bg-barakaprimary-madder p-4 rounded-md text-lg transition-all duration-300 font-poppins-semibold`}
                             type="button"
                             title="Add Address"
                             onClick={() => {
                                 setOpenModalAdd(true)
-                                console.log('open modal')
-                            }} // open modal ADD ADDRESS
+                            }}
                         >
                             <Plus size={20} strokeWidth={5} />
                         </Button>
@@ -72,18 +119,22 @@ const AddressLayout = () => {
                         Your Addresses
                     </h1>
 
+                    {/* ADDRESS LIST */}
                     <div className="mt-5 grid grid-cols-12 gap-5">
                         {isLoadingAddresses ? (
-                            <Loader
-                                size={40}
-                                className="mx-auto animate-spin"
-                            />
+                            <div className="col-span-12 flex items-center justify-center">
+                                <Loader2 size={40} className="animate-spin" />
+                            </div>
                         ) : (
                             addresses &&
                             addresses.map((address, index) => (
-                                <AddressCardList
-                                    address={address}
+                                <AddressList
                                     key={index}
+                                    address={address}
+                                    selectedEdit={selectedEdit}
+                                    setSelectedEdit={setSelectedEdit}
+                                    onUpdate={handleUpdateAddress}
+                                    onDelete={handleDeleteAddress}
                                 />
                             ))
                         )}
@@ -103,7 +154,12 @@ const AddressLayout = () => {
                 <div className="sticky top-0 border-b border-b-black/20 bg-zinc-100 py-5 text-center shadow-md">
                     <H1>Add an address</H1>
                 </div>
-                <FormAddress formFor="add" variantClass={`pt-5 pb-2 px-10`} />
+                <FormAddress
+                    onSubmit={handleCreateAddress}
+                    isLoading={isLoadingStoreAddress}
+                    variant={`pt-5 pb-2 px-10`}
+                    formFor="add"
+                />
                 <div className="px-10 pb-5">
                     <Button
                         type="button"

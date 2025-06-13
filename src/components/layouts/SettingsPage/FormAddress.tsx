@@ -1,94 +1,90 @@
+import { useForm } from 'react-hook-form'
 import Select from '../../elements/FormElement/Select'
+import { AddressTypePayload } from '../../../types/AddressType'
+import { useEffect } from 'react'
+import {
+    useKabupatens,
+    useKecamatans,
+    useKelurahans,
+    useProvinces,
+} from '../../../utililties/customHook/useAddressOptions'
 import Input from '../../elements/FormElement/Input'
-import { useAuth } from '../../../utililties/customHook/useAuth'
 import Button from '../../elements/Button/Button'
 import TextArea from '../../elements/FormElement/TextArea'
-import useAddress from '../../../utililties/customHook/useAddress'
-import { useEffect } from 'react'
 import { Loader2 } from 'lucide-react'
-import {
-    useAddressDetail,
-    // useUpdateAddress,
-} from '../../../utililties/customHook/useAddressMutation'
+import { useAuth } from '../../../utililties/customHook/useAuth'
+import { useUpdateAddress } from '../../../utililties/customHook/useAddressMutation'
 
-type FormAddAddressProps = {
+type FormAddressProps = {
+    onSubmit?: (data: AddressTypePayload) => void
+    defaultValues?: AddressTypePayload | null
+    isLoading?: boolean
+    variant?: string
     formFor: 'add' | 'edit'
-    variantClass?: string
-    addressId?: number
 }
 const FormAddress = ({
-    formFor,
-    variantClass,
-    addressId,
-}: FormAddAddressProps) => {
+    onSubmit,
+    defaultValues,
+    isLoading,
+    variant,
+    formFor = 'add',
+}: FormAddressProps) => {
     const { user } = useAuth()
-    const { form, wilayah, actions } = useAddress()
-    const { addressData, isSuccess, isLoadingData, wilayahCode } =
-        useAddressDetail('edit', addressId!)
-    const { reset, setValue } = form
-    // START SET POSTAL CODE because the postal_code is manualy set the value in input, so we need to set it with useEffect
-    const selectedKelurahanCode = form.selectedCode.Kelurahan
-    const setPostalCode = form.setValue
+    const { isLoadingUpdate } = useUpdateAddress()
 
-    useEffect(() => {
-        const kelurahan = wilayah.kelurahans?.find(
-            (kel) => kel.code === selectedKelurahanCode
-        )
-
-        if (kelurahan?.postal_code) {
-            setPostalCode('postal_code', kelurahan.postal_code)
-        }
-    }, [selectedKelurahanCode, wilayah.kelurahans, setPostalCode])
-    // END SET POSTAL CODE
-
-    // useEffect if formFor === 'edit
-    useEffect(() => {
-        if (formFor === 'edit' && addressData && isSuccess) {
-            setValue('provinsi', wilayahCode.provinsi)
-            setValue('kabupaten', wilayahCode.kabupaten)
-            setValue('kecamatan', wilayahCode.kecamatan!)
-            setValue('kelurahan', wilayahCode.kelurahan!)
-            setValue('postal_code', addressData.postal_code)
-            setValue('detail', addressData.detail)
-            // setValue({
-            //     provinsi: wilayahCode.provinsi,
-            //     kabupaten: wilayahCode.kabupaten,
-            //     kecamatan: wilayahCode.kecamatan,
-            //     kelurahan: wilayahCode.kelurahan,
-            //     postal_code: addressData.postal_code,
-            //     detail: addressData.detail,
-            // })
-        }
-    }, [
-        formFor,
-        addressData,
-        isSuccess,
+    const {
+        register,
+        watch,
+        reset,
+        handleSubmit,
         setValue,
-        wilayahCode.kabupaten,
-        wilayahCode.kecamatan,
-        wilayahCode.kelurahan,
-        wilayahCode.provinsi,
-    ])
-    const handleOnSubmit = () => {
-        if (formFor === 'add') {
-            actions.onSubmit(form.payload, {
-                onSuccess: () => {
-                    reset()
-                },
-            })
-        } else {
-            //for edit
-        }
-    }
+        formState: { errors },
+    } = useForm({
+        defaultValues: defaultValues || {
+            provinsi: '',
+            kabupaten: '',
+            kecamatan: '',
+            kelurahan: '',
+            postal_code: '',
+            detail: '',
+        },
+    })
 
-    return formFor === 'edit' && isLoadingData ? (
-        <div className="flex h-full w-full items-center justify-center">
-            <Loader2 size={40} className="m-auto animate-spin" />
-        </div>
-    ) : (
+    // reset form saat defaultValues berubah (untuk form edit address)
+    useEffect(() => {
+        if (defaultValues) {
+            reset(defaultValues)
+        }
+    }, [defaultValues, reset])
+
+    const selectedCodeProvinsi = watch('provinsi')
+    const selectedCodeKabupaten = watch('kabupaten')
+    const selectedCodeKecamatan = watch('kecamatan')
+    const selectedCodeKelurahan = watch('kelurahan')
+
+    const { data: provinces = [], isLoading: isLoadingProvinces } =
+        useProvinces()
+    const { data: kabupatens = [], isLoading: isLoadingKabupaten } =
+        useKabupatens(selectedCodeProvinsi)
+    const { data: kecamatans = [], isLoading: isLoadingKecamatan } =
+        useKecamatans(selectedCodeKabupaten)
+    const { data: kelurahans = [], isLoading: isLoadingKelurahan } =
+        useKelurahans(selectedCodeKecamatan)
+
+    // set POSTAL CODE saat kelurahan sudah dipilih
+    useEffect(() => {
+        const findPostalCode = kelurahans.find(
+            (kel) => kel.code === selectedCodeKelurahan
+        )?.postal_code
+        if (findPostalCode) {
+            setValue('postal_code', findPostalCode)
+        }
+    }, [selectedCodeKelurahan, kelurahans, setValue])
+
+    return (
         <form
-            onSubmit={form.handleSubmit(handleOnSubmit)}
-            className={`flex flex-col gap-5 ${variantClass}`}
+            onSubmit={handleSubmit(onSubmit!)}
+            className={`flex flex-col gap-5 ${variant}`}
         >
             <div className="">
                 <Input
@@ -129,145 +125,121 @@ const FormAddress = ({
                     </p>
                 )}
             </div>
-            {/* PROVINCE */}
             <Select
-                {...form.register('provinsi', {
-                    required: 'Province is required',
-                })}
-                errorMessage={form.errors.provinsi?.message}
-                labelTitle="Province"
-                id="provinsi"
+                {...register('provinsi', { required: 'Provinsi is required' })}
                 labelFor="provinsi"
+                labelTitle="Provinsi"
+                id="provinsi"
                 onChange={(e) => {
-                    const provCode = e.target.value
-                    form.setValue('provinsi', provCode)
-                    form.resetField('kabupaten')
-                    form.resetField('kecamatan')
-                    form.resetField('kelurahan')
-                    form.resetField('postal_code')
+                    e.preventDefault()
+                    setValue('kabupaten', '')
+                    setValue('kecamatan', '')
+                    setValue('kelurahan', '')
                 }}
-                variantClass={`w-full ${form.selectedCode.Province && 'ring ring-green-500 shadow-md shadow-green-500/50'} ${wilayah.dataLoading.isLoadingProvinces && 'animate-pulse shadow-red-500/20 shadow-xl ring-2 ring-red-500/60'}`}
+                errorMessage={errors.provinsi?.message}
+                variantClass={`w-full ${selectedCodeProvinsi && 'ring ring-green-500 shadow-md shadow-green-500/50'} ${isLoadingProvinces && 'animate-pulse shadow-red-500/20 shadow-xl ring-2 ring-red-500/60'}`}
             >
-                <option value="" disabled>
-                    -- Select Province --
-                </option>
-                {wilayah.provinces &&
-                    wilayah.provinces.map((province, index) => (
-                        <option value={province.code} key={index}>
-                            {province.name}
-                        </option>
-                    ))}
+                <option value="">-- Select Provinsi --</option>
+                {provinces.map((prov) => (
+                    <option key={prov.code} value={prov.code}>
+                        {prov.name}
+                    </option>
+                ))}
             </Select>
-            {/* KABUPATEN */}
             <Select
-                {...form.register('kabupaten', {
+                {...register('kabupaten', {
                     required: 'Kabupaten is required',
                 })}
-                errorMessage={form.errors.kabupaten?.message}
+                labelFor="kabupaten"
                 labelTitle="Kabupaten"
                 id="kabupaten"
-                labelFor="kabupaten"
-                variantClass={`w-full ${form.selectedCode.Kabupaten && 'ring ring-green-500 shadow-md shadow-green-500/50'} ${wilayah.dataLoading.isLoadingKabupaten && 'animate-pulse shadow-red-500/20 shadow-xl ring-2 ring-red-500/60'}`}
+                errorMessage={errors.kabupaten?.message}
+                variantClass={`w-full ${selectedCodeKabupaten && 'ring ring-green-500 shadow-md shadow-green-500/50'} ${isLoadingKabupaten && 'animate-pulse shadow-red-500/20 shadow-xl ring-2 ring-red-500/60'}`}
             >
-                <option value="" disabled>
-                    -- Select Kabupaten --
-                </option>
-                {wilayah.kabupatens &&
-                    wilayah.kabupatens.map((kabupaten, index) => (
-                        <option value={kabupaten.code} key={index}>
-                            {kabupaten.name}
-                        </option>
-                    ))}
+                <option value="">-- Select Kabupaten --</option>
+                {kabupatens.map((kab) => (
+                    <option key={kab.code} value={kab.code}>
+                        {kab.name}
+                    </option>
+                ))}
             </Select>
-            {/* KECAMATAN */}
             <Select
-                {...form.register('kecamatan', {
+                {...register('kecamatan', {
                     required: 'Kecamatan is required',
                 })}
-                errorMessage={form.errors.kecamatan?.message}
+                labelFor="kecamatan"
                 labelTitle="Kecamatan"
                 id="kecamatan"
-                labelFor="kecamatan"
-                variantClass={`${form.selectedCode.Kecamatan && 'ring ring-green-500 shadow-md shadow-green-500/50'} ${wilayah.dataLoading.isLoadingKecamatan && 'animate-pulse shadow-red-500/20 shadow-xl ring-2 ring-red-500/60'}`}
+                errorMessage={errors.kecamatan?.message}
+                variantClass={`w-full ${selectedCodeKecamatan && 'ring ring-green-500 shadow-md shadow-green-500/50'} ${isLoadingKecamatan && 'animate-pulse shadow-red-500/20 shadow-xl ring-2 ring-red-500/60'}`}
             >
-                <option value="" disabled>
-                    -- Select Kecamatan --
-                </option>
-                {form.selectedCode.Province &&
-                    wilayah.kecamatans &&
-                    wilayah.kecamatans.map((kecamatan, index) => (
-                        <option value={kecamatan.code} key={index}>
-                            {kecamatan.name}
-                        </option>
-                    ))}
+                <option value="">-- Select Kecamatan --</option>
+                {kecamatans.map((kec) => (
+                    <option key={kec.code} value={kec.code}>
+                        {kec.name}
+                    </option>
+                ))}
             </Select>
-            {/* KELURAHAN */}
             <Select
-                {...form.register('kelurahan', {
+                {...register('kelurahan', {
                     required: 'Kelurahan is required',
                 })}
-                errorMessage={form.errors.kelurahan?.message}
+                labelFor="kelurahan"
                 labelTitle="Kelurahan"
                 id="kelurahan"
-                labelFor="kelurahan"
-                variantClass={`${form.selectedCode.Kelurahan && 'ring ring-green-500 shadow-md shadow-green-500/50'} ${wilayah.dataLoading.isLoadingKelurahan && 'animate-pulse shadow-red-500/20 shadow-xl ring-2 ring-red-500/60'}`}
+                errorMessage={errors.kelurahan?.message}
+                variantClass={`w-full ${selectedCodeKelurahan && 'ring ring-green-500 shadow-md shadow-green-500/50'} ${isLoadingKelurahan && 'animate-pulse shadow-red-500/20 shadow-xl ring-2 ring-red-500/60'}`}
             >
-                <option value="" disabled>
-                    -- Select Kelurahan --
-                </option>
-                {wilayah.kelurahans &&
-                    wilayah.kelurahans.map((kelurahan, index) => (
-                        <option value={kelurahan.code} key={index}>
-                            {kelurahan.name}
-                        </option>
-                    ))}
+                <option value="">-- Select Kelurahan --</option>
+                {kelurahans.map((kel) => (
+                    <option key={kel.code} value={kel.code}>
+                        {kel.name}
+                    </option>
+                ))}
             </Select>
-            {/* POSTAL CODE */}
             <Input
-                {...form.register('postal_code', {
+                {...register('postal_code', {
                     required: 'Postal Code is required',
                 })}
-                errorMessage={form.errors.postal_code?.message}
                 labelTitle="Postal Code"
                 labelFor="postal_code"
-                readOnly
                 id="postal_code"
+                readOnly
                 autoComplete="off"
-                variantClass={`cursor-default ${form.selectedCode.Kelurahan && 'ring ring-green-500 shadow-md shadow-green-500/50'}`}
-                value={
-                    (form.selectedCode.Kelurahan &&
-                        wilayah.kelurahans?.find(
-                            (kelurahan) =>
-                                kelurahan.code === form.selectedCode.Kelurahan
-                        )?.postal_code) ||
-                    ''
-                }
+                variantClass={`${watch('postal_code') && 'ring ring-green-500 shadow-md shadow-green-500/50'}`}
+                errorMessage={errors.postal_code?.message}
             />
 
             <TextArea
-                {...form.register('detail', {
+                {...register('detail', {
                     required: 'Detail Address is required',
                 })}
-                errorMessage={form.errors.detail?.message}
                 labelTitle="Detail Address"
                 labelFor="detail"
                 id="detail"
                 autoComplete="off"
-                variantClass={`${form.selectedCode.Detail && 'ring ring-green-500 shadow-md shadow-green-500/50'} `}
-            />
+                errorMessage={errors.detail?.message}
+                rows={10}
+                variantClass={`${watch('detail') && 'ring ring-green-500 shadow-md shadow-green-500/50'}`}
+            ></TextArea>
 
             <Button
-                variant={`bg-zinc-700 flex items-center justify-center text-white font-poppins-semibold rounded-md py-2 hover:bg-zinc-800 transition-all duration-300 ease-in-out ${actions.loadingCreateAddress && 'animate-pulse bg-barakaprimary-madder'}`}
                 type="submit"
+                variant={`flex mt-5 gap-3 items-center justify-center bg-black px-4 py-2 font-poppins-bold hover:bg-barakaprimary-madder text-white rounded-md ${isLoading || (isLoadingUpdate && 'cursor-wait')}`}
+                disabled={isLoading || isLoadingUpdate}
             >
-                {' '}
-                {actions.loadingCreateAddress ? (
-                    <div className="flex gap-2">
+                {isLoading || isLoadingUpdate ? (
+                    <>
                         <Loader2 className="animate-spin" />
-                        <h1 className="font-bold">SAVING ADDRESS...</h1>
-                    </div>
+                        <span>
+                            {formFor === 'edit' ? 'Updating' : 'Adding'}{' '}
+                            Address...
+                        </span>
+                    </>
+                ) : defaultValues ? (
+                    'Update Address'
                 ) : (
-                    'ADD ADDRESS'
+                    'Add Address'
                 )}
             </Button>
         </form>

@@ -1,19 +1,23 @@
-import axios from "axios";
-import { URLBase } from "../urlBase";
+import axios from 'axios'
+import { URLBase } from '../urlBase'
 
 type KelurahanType = {
     code: string
     name: string
-    postal_code: string;
-};
+    postal_code: string
+}
 
-export const getKelurahan = async (code_kecamatan: string): Promise<KelurahanType[]> => {
+export const getKelurahan = async (
+    code_kecamatan: string
+): Promise<KelurahanType[]> => {
     try {
-        const res = await axios.get(`${URLBase}/rajaongkir/kelurahan/${code_kecamatan}`);
+        const res = await axios.get(
+            `${URLBase}/rajaongkir/kelurahan/${code_kecamatan}`
+        )
 
-        return res.data;
+        return res.data.data
     } catch (error) {
-        console.error(error);
-        return [];
+        console.error(error)
+        return []
     }
 }

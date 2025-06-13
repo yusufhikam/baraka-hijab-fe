@@ -1,19 +1,22 @@
-import axios from "axios";
-import { URLBase } from "../urlBase";
+import axios from 'axios'
+import { URLBase } from '../urlBase'
 
 type KabupatenType = {
-    code: string;
-    name: string;
-};
+    code: string
+    name: string
+}
 
-export const getKabupaten = async (code_province: string): Promise<KabupatenType[]> => {
+export const getKabupaten = async (
+    code_province: string
+): Promise<KabupatenType[]> => {
     try {
-        const res = await axios.get(`${URLBase}/rajaongkir/kabupaten/${code_province}`);
+        const res = await axios.get(
+            `${URLBase}/rajaongkir/kabupaten/${code_province}`
+        )
 
-        // console.log(res.data);
-        return res.data;
+        return res.data.data
     } catch (error) {
         console.error(error)
-        return [];
+        return []
     }
 }
