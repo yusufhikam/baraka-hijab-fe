@@ -1,8 +1,8 @@
 import useDarkMode from '../../../utililties/customHook/useDarkMode'
 
 type SelectProps = {
-    labelFor: string
-    labelTitle: string
+    labelFor?: string
+    labelTitle?: string
     variantClass?: string
     errorMessage?: string
 } & React.DetailedHTMLProps<

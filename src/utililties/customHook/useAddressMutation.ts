@@ -6,13 +6,11 @@ import deleteAddress from '../api/addresses/deleteAddress'
 import { useMemo, useState } from 'react'
 import getAddress from '../api/addresses/getAddress'
 import setPrimaryAddress from '../api/addresses/setPrimaryAddress'
-import { getProvince } from '../api/CekOngkir/getProvince'
 import updateAddress from '../api/addresses/updateAddress'
-import getAddressById from '../api/addresses/getAddressById'
-import { getKabupaten } from '../api/CekOngkir/getKabupaten'
-import { getKecamatans } from '../api/CekOngkir/getKecamatan'
-import { getKelurahan } from '../api/CekOngkir/getKelurahan'
 import { useForm } from 'react-hook-form'
+import { calculateCostType, cekOngkir } from '../api/CekOngkir/cekOngkir'
+import { useCart } from './useCart'
+import { useSearchParams } from 'react-router-dom'
 
 // GET DATA ADDRESS
 
@@ -121,108 +119,7 @@ export const useSetPrimaryAddress = () => {
 }
 // END SET MAIN ADDRESS
 
-export const useAddressDetail = (
-    formFor: 'edit' | 'add',
-    addressId: AddressType['id']
-) => {
-    const isEdit = formFor === 'edit' && !!addressId
-
-    const {
-        data: addressData,
-        isLoading: isLoadingAddress,
-        isSuccess,
-        refetch,
-    } = useQuery({
-        queryKey: ['address', addressId],
-        queryFn: () => getAddressById(addressId),
-        enabled: isEdit,
-    })
-
-    const wilayahName = {
-        provinsi: addressData?.provinsi,
-        kabupaten: addressData?.kabupaten,
-        kecamatan: addressData?.kecamatan,
-        kelurahan: addressData?.kelurahan,
-    }
-    // GET DATA PROVINCE
-    const { data: provinces, isLoading: isLoadingProvinces } = useQuery({
-        queryKey: ['provinces'],
-        queryFn: () => getProvince(),
-    })
-
-    const provinceCode = useMemo(() => {
-        return (
-            provinces?.find((prov) => prov.name === wilayahName.provinsi)
-                ?.code || ''
-        )
-    }, [provinces, wilayahName.provinsi])
-
-    // GET DATA KABUPATEN
-    const {
-        data: kabupatens,
-        isLoading: isLoadingKabupaten,
-        refetch: refetchKabupaten,
-    } = useQuery({
-        queryKey: ['kabupatens', provinceCode],
-        queryFn: () => getKabupaten(provinceCode!),
-        enabled: !!provinceCode,
-    })
-
-    const kabupatenCode = useMemo(() => {
-        return (
-            kabupatens?.find((kab) => kab.name === wilayahName.kabupaten)
-                ?.code || ''
-        )
-    }, [kabupatens, wilayahName.kabupaten])
-
-    // GET DATA KECAMATAN
-    const { data: kecamatans, isLoading: isLoadingKecamatan } = useQuery({
-        queryKey: ['kecamatans', kabupatenCode],
-        queryFn: () => getKecamatans(kabupatenCode!),
-        enabled: !!kabupatenCode,
-    })
-
-    const kecamatanCode = useMemo(() => {
-        return kecamatans?.find((kec) => kec.name === wilayahName.kecamatan)
-            ?.code
-    }, [kecamatans, wilayahName.kecamatan])
-
-    // GET DATA KELURAHAN
-    const { data: kelurahans, isLoading: isLoadingKelurahan } = useQuery({
-        queryKey: ['kelurahans', kecamatanCode],
-        queryFn: () => getKelurahan(kecamatanCode!),
-        enabled: !!kecamatanCode,
-    })
-
-    const kelurahanCode = useMemo(() => {
-        return kelurahans?.find((kel) => kel.name === wilayahName.kelurahan)
-            ?.code
-    }, [kelurahans, wilayahName.kelurahan])
-
-    const isLoadingData =
-        isEdit &&
-        (isLoadingAddress ||
-            isLoadingProvinces ||
-            isLoadingKabupaten ||
-            isLoadingKecamatan ||
-            isLoadingKelurahan)
-    const wilayahCode = {
-        provinsi: provinceCode,
-        kabupaten: kabupatenCode,
-        kecamatan: kecamatanCode,
-        kelurahan: kelurahanCode,
-    }
-
-    return {
-        addressData,
-        isSuccess,
-        refetch,
-        wilayahCode,
-        isLoadingData,
-        refetchKabupaten,
-    }
-}
-
+// ♻️ UPDATE ADDRESS
 export const useUpdateAddress = (onSuccessCallback?: () => void) => {
     const queryClient = useQueryClient()
 
@@ -259,4 +156,51 @@ export const useUpdateAddress = (onSuccessCallback?: () => void) => {
         updateAddressData,
         isLoadingUpdate,
     }
+}
+
+type useCalculatingShippingProps = {
+    address: AddressType | undefined
+    courier: string
+}
+
+export const useCalculateShipping = ({
+    address,
+    courier,
+}: useCalculatingShippingProps) => {
+    const [, setSearchParams] = useSearchParams()
+    const { carts } = useCart()
+    const [courierShipping, setCourierShipping] = useState<
+        calculateCostType[] | null
+    >(null)
+
+    const itemsWeight = useMemo(() => {
+        return carts?.reduce(
+            (acc, item) => acc + item.productVariant.weight * item.quantity,
+            0
+        )
+    }, [carts])
+
+    const { mutate, isPending } = useMutation({
+        mutationFn: () =>
+            cekOngkir({
+                origin: '52965', // hard code for origin shipping postal code from Sale Rembang
+                destination: address?.postal_code,
+                weight: itemsWeight,
+                courier,
+            }),
+        onError: () => {
+            ToastSweetAlert({
+                iconToast: 'error',
+                titleToast: 'Failed to calculate shipping',
+            })
+        },
+        onSuccess: (data) => {
+            if (data) {
+                setCourierShipping(data)
+                setSearchParams({ courier })
+            }
+        },
+    })
+
+    return { mutate, isPending, courierShipping }
 }

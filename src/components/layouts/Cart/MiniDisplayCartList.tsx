@@ -9,6 +9,7 @@ import { CartType } from '../../../types/CartType'
 import handleDeleteItemCart from '../../../utililties/helper/ProductHelper/handleDeleteItemCart'
 import { baseImageUrl } from '../../../utililties/api/urlBase'
 import Modal from '../../elements/Modal/Modal'
+import { Link } from 'react-router-dom'
 
 type MiniDisplayCartListProps = {
     showMiniCart: boolean
@@ -212,12 +213,12 @@ const MiniDisplayCartList = memo(
                                 }).format(subTotal ?? 0)}
                             </p>
                         </div>
-                        <Button
-                            type="button"
-                            variant={`p-2 rounded-md transition-all duration-300 bg-barakaprimary-madder text-white hover:bg-barakaprimary-dessert hover:text-black`}
+                        <Link
+                            to="/checkout"
+                            className={`bg-barakaprimary-madder hover:bg-barakaprimary-dessert rounded-md p-2 text-center text-white transition-all duration-300 hover:text-black`}
                         >
                             Checkout
-                        </Button>
+                        </Link>
                         <Button
                             type="button"
                             variant={`p-2 text-center rounded-md transition-all duration-300 text-white sm:text-black border hover:border-none border-white sm:border-barakaprimary-madder hover:bg-barakaprimary-dessert hover:text-black`}

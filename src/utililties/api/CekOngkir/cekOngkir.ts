@@ -1,37 +1,40 @@
-import axios from "axios";
-import { URLBase } from "../urlBase";
+import axios from 'axios'
+import { URLBase } from '../urlBase'
 
-type calculateCostType = {
-    name: string;
-    code: string;
-    service: string;
-    description: string;
-    cost: number;
-    etd: string;
+export type calculateCostType = {
+    name: string
+    code: string
+    service: string
+    description: string
+    cost: number
+    etd: string
 }
 
 type costType = {
-    origin: string;
-    destination: string | undefined;
-    weight: number | undefined;
-    courier: string;
+    origin: string
+    destination: string | undefined
+    weight: number | undefined
+    courier: string
 }
 
-export const cekOngkir = async ({ origin, destination, weight, courier }: costType): Promise<calculateCostType> => {
-
-    
+export const cekOngkir = async ({
+    origin,
+    destination,
+    weight,
+    courier,
+}: costType): Promise<calculateCostType[]> => {
     try {
         const res = await axios.post(`${URLBase}/rajaongkir/cost`, {
             origin,
             destination,
             weight,
-            courier
-        });
+            courier,
+        })
 
-        console.log(res.data);
-        return res.data;
+        // console.log(res.data)
+        return res.data
     } catch (error) {
-        console.error(error);
-        return { name: '', code: '', service: '', description: '', cost: 0, etd: '' };
+        console.error(error)
+        return []
     }
 }

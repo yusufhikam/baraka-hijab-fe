@@ -19,7 +19,7 @@ const Breadcrumb = ({ links_breadcrumb }: BreadcrumbProps) => {
             {links_breadcrumb.map((link_breadcrumb, index) => (
                 <span
                     key={index}
-                    className="flex items-center text-center text-lg sm:text-2xl md:text-3xl"
+                    className="flex items-center text-center text-xs sm:text-xl md:text-2xl"
                 >
                     <Link
                         to={link_breadcrumb.link}

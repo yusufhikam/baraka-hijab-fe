@@ -9,6 +9,7 @@ import { ProtectedRoute } from '../utililties/helper/Auth/ProtectedRoute'
 import { AdminRoute } from './AdminRoute'
 import CartsPage from '../pages/CartsPage'
 import SettingsPage from '../pages/SettingsPage'
+import CheckoutPage from '../pages/CheckoutPage'
 
 const router = createBrowserRouter([
     {
@@ -29,6 +30,14 @@ const router = createBrowserRouter([
                 element: (
                     <ProtectedRoute allowedRoles={'customer'}>
                         <SettingsPage />
+                    </ProtectedRoute>
+                ),
+            },
+            {
+                path: '/checkout',
+                element: (
+                    <ProtectedRoute allowedRoles="customer">
+                        <CheckoutPage />
                     </ProtectedRoute>
                 ),
             },
