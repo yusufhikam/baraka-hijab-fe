@@ -4,14 +4,17 @@ import { URLBase } from '../utililties/api/urlBase'
 import syncCartsFromLocalStorage from '../utililties/api/carts/syncCartsFromLocalStorage'
 import ToastSweetAlert from '../components/elements/Alert/Toast/ToastSweetAlert'
 import { UserType } from '../types/UserType'
+import { LoginType } from '../types/LoginType'
 
 type AuthContextType = {
     user: UserType | null
     token: string | null
-    login: (email: string, password: string) => Promise<void>
+    login: (data: LoginType) => Promise<void>
     logout: () => void
     isAuthenticated: boolean
     loading: boolean
+    setUser: React.Dispatch<React.SetStateAction<UserType | null>>
+    setToken: React.Dispatch<React.SetStateAction<string | null>>
 }
 
 type AuthContextProviderProps = {
@@ -39,12 +42,9 @@ export const AuthProvider = ({ children }: AuthContextProviderProps) => {
     }, [])
 
     // login function
-    const login = async (email: string, password: string) => {
+    const login = async (data: LoginType) => {
         try {
-            const res = await axios.post(`${URLBase}/auth/login`, {
-                email,
-                password,
-            })
+            const res = await axios.post(`${URLBase}/auth/login`, data)
 
             const token = res.data.auth_token
 
@@ -65,7 +65,8 @@ export const AuthProvider = ({ children }: AuthContextProviderProps) => {
                             2000
                         ),
                 })
-                return
+                // return
+                throw new Error('Unauthorized')
             } else {
                 // jika role customer
                 ToastSweetAlert({
@@ -113,7 +114,16 @@ export const AuthProvider = ({ children }: AuthContextProviderProps) => {
 
     return (
         <AuthContext.Provider
-            value={{ user, token, login, logout, isAuthenticated, loading }}
+            value={{
+                user,
+                token,
+                login,
+                logout,
+                isAuthenticated,
+                loading,
+                setToken,
+                setUser,
+            }}
         >
             {children}
         </AuthContext.Provider>

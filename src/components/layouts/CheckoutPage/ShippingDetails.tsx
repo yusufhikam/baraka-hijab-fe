@@ -126,7 +126,7 @@ const ShippingDetails = ({
                         </Select>
 
                         {errors.courier && (
-                            <p className="w-full rounded-md border border-red-500 bg-red-200 px-2 text-center text-red-500">
+                            <p className="w-full rounded-md border border-red-500 bg-red-500/20 px-2 text-center text-red-500">
                                 {errors.courier?.message}
                             </p>
                         )}
@@ -134,7 +134,7 @@ const ShippingDetails = ({
                         <Button
                             type="submit"
                             variant={` flex items-center justify-center gap-2 text-white w-full py-2 rounded-md font-bold tracking-widest 
-                                        ${isDarkMode ? 'bg-barakaprimary-madder hover:bg-barakaprimary-dessert hover:text-black' : 'bg-black hover:bg-barakaprimary-madder '}
+                                        ${isDarkMode ? 'bg-barakaprimary-madder hover:bg-barakaprimary-snow hover:text-barakaprimary-madder' : 'bg-black hover:bg-barakaprimary-madder '}
                                         ${isCalculating && 'cursor-wait '}`}
                             disabled={isCalculating}
                         >

@@ -4,12 +4,14 @@ import H1 from '../../elements/Title Header/H1'
 import { calculateCostType } from '../../../utililties/api/CekOngkir/cekOngkir'
 import { useMemo } from 'react'
 import { Loader2 } from 'lucide-react'
+import useDarkMode from '../../../utililties/customHook/useDarkMode'
 
 type BillingDetailsProps = {
     selectedCourier: calculateCostType | null
 }
 
 const BillingDetails = ({ selectedCourier }: BillingDetailsProps) => {
+    const { isDarkMode } = useDarkMode()
     const { carts, subTotalPerVariant, formatCurrency, subTotal, isLoading } =
         useCart()
 
@@ -38,7 +40,9 @@ const BillingDetails = ({ selectedCourier }: BillingDetailsProps) => {
                         {/* ORDER DETAIL */}
 
                         <div className="grid w-full grid-cols-2">
-                            <div className="col-span-1 mb-2 border-b-2 border-black/20">
+                            <div
+                                className={`col-span-1 mb-2 border-b-2 ${isDarkMode ? 'border-white/20' : 'border-black/20'}`}
+                            >
                                 <H1
                                     fontSize="text-md"
                                     fontWeight="font-semibold"
@@ -46,7 +50,9 @@ const BillingDetails = ({ selectedCourier }: BillingDetailsProps) => {
                                     PRODUCT
                                 </H1>
                             </div>
-                            <div className="col-span-1 mb-2 border-b-2 border-black/20 text-right">
+                            <div
+                                className={`col-span-1 mb-2 border-b-2 text-right ${isDarkMode ? 'border-white/20' : 'border-black/20'}`}
+                            >
                                 <H1
                                     fontSize="text-md"
                                     fontWeight="font-semibold"
@@ -57,7 +63,9 @@ const BillingDetails = ({ selectedCourier }: BillingDetailsProps) => {
                             {carts &&
                                 carts.map((cart, index) => (
                                     <Fragment key={index}>
-                                        <div className="col-span-1 mb-2 border-b border-black/20">
+                                        <div
+                                            className={`col-span-1 mb-2 border-b py-1 ${isDarkMode ? 'border-white/20' : 'border-black/20'}`}
+                                        >
                                             <p className="flex items-center gap-2 text-xs">
                                                 {
                                                     cart.productVariant.product
@@ -68,7 +76,9 @@ const BillingDetails = ({ selectedCourier }: BillingDetailsProps) => {
                                                 </span>
                                             </p>
                                         </div>
-                                        <div className="col-span-1 mb-2 border-b border-black/20 text-right">
+                                        <div
+                                            className={`col-span-1 mb-2 border-b py-1 text-right ${isDarkMode ? 'border-white/20' : 'border-black/20'}`}
+                                        >
                                             <p className="text-xs">
                                                 {String(
                                                     subTotalPerVariant(
@@ -83,7 +93,9 @@ const BillingDetails = ({ selectedCourier }: BillingDetailsProps) => {
 
                         {/* TOTAL PAYMENT */}
 
-                        <div className="flex w-full flex-col gap-2 border-b-2 border-black/20">
+                        <div
+                            className={`flex w-full flex-col gap-3 border-b-2 py-1 ${isDarkMode ? 'border-white/20' : 'border-black/20'}`}
+                        >
                             <div className="flex justify-between">
                                 <H1 fontSize="text-xs">Subtotal</H1>
                                 <H1 fontSize="text-xs">

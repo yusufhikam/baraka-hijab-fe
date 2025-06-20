@@ -3,6 +3,7 @@ type H1Props = {
     fontFamily?: string
     fontWeight?: string
     fontSize?: string
+    
 }
 
 export default function H1({

@@ -1,4 +1,4 @@
-import { Loader2, Menu, ShoppingBag, UserCircle } from 'lucide-react'
+import { Loader2, Menu, ShoppingBag, UserCircle, X } from 'lucide-react'
 import useDarkMode from '../../../utililties/customHook/useDarkMode'
 import ButtonTheme from '../../elements/Button/ButtonTheme'
 import Button from '../../elements/Button/Button'
@@ -70,9 +70,9 @@ const Navbar = () => {
                 <Button
                     type="button"
                     onClick={() => setOpenMenu(!openMenu)}
-                    variant="md:hidden"
+                    variant={`md:hidden transition-all duration-300 hover:scale-125 ${openMenu ? 'rotate-90' : 'rotate-0'} ${isDarkMode ? 'hover:text-barakaprimary-dessert' : 'hover:text-barakaprimary-madder'}`}
                 >
-                    <Menu size={30} className="" />
+                    {openMenu ? <X size={30} /> : <Menu size={30} />}
                 </Button>
             </div>
 

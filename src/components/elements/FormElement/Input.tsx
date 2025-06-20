@@ -5,6 +5,7 @@ type InputProps = {
     labelFor: string
     variantClass?: string
     errorMessage?: string
+    errorMessageVariantClass?: string
 } & React.DetailedHTMLProps<
     React.InputHTMLAttributes<HTMLInputElement>,
     HTMLInputElement
@@ -15,11 +16,12 @@ export default function Input({
     labelFor,
     variantClass,
     errorMessage,
+    errorMessageVariantClass,
     ...props
 }: InputProps) {
     const { isDarkMode } = useDarkMode()
     return (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col justify-center gap-2">
             <label htmlFor={`${labelFor}`} className="font-bold">
                 {labelTitle}
             </label>
@@ -32,7 +34,11 @@ export default function Input({
                 {...props}
             />
             {errorMessage && (
-                <p className="ms-2 text-xs text-red-500">{errorMessage}</p>
+                <p
+                    className={`text-xs text-red-500 ${errorMessageVariantClass}`}
+                >
+                    {errorMessage}
+                </p>
             )}
         </div>
     )

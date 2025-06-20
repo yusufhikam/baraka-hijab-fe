@@ -10,11 +10,16 @@ import { AdminRoute } from './AdminRoute'
 import CartsPage from '../pages/CartsPage'
 import SettingsPage from '../pages/SettingsPage'
 import CheckoutPage from '../pages/CheckoutPage'
+import GoogleCallbackPage from '../pages/GoogleCallbackPage'
 
 const router = createBrowserRouter([
     {
         path: '/login',
         element: <LoginPage />,
+    },
+    {
+        path: '/oauth/google/callback',
+        element: <GoogleCallbackPage />,
     },
     {
         path: '/',
