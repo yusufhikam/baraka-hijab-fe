@@ -1,5 +1,5 @@
 import Breadcrumb from '../../fragments/Breadcrumb/Breadcrumb'
-import { Loader2, Plus } from 'lucide-react'
+import { Frown, Loader2, Plus } from 'lucide-react'
 import useDarkMode from '../../../utililties/customHook/useDarkMode'
 import Button from '../../elements/Button/Button'
 import { useCallback, useState } from 'react'
@@ -23,14 +23,16 @@ const AddressLayout = () => {
         isOpen: boolean
         address: AddressType | null
     }>({ isOpen: false, address: null })
+    // ✅ CREATE ADDRESS
     const { storeAddress, isLoadingStoreAddress } = useCreateAddress()
+    // ✅ UPDATE ADDRESS
     const { updateAddressData } = useUpdateAddress(() =>
         setSelectedEdit({ isOpen: false, address: null })
     )
+    // ❌ DELETE ADDRESS
     const { mutate: onDelete } = useDeleteAddress()
 
     // set params
-
 
     // ✅ GET DATA ADDRESS
     const { addresses, isLoadingAddresses } = useGetAddress()
@@ -127,6 +129,17 @@ const AddressLayout = () => {
                         {isLoadingAddresses ? (
                             <div className="col-span-12 flex items-center justify-center">
                                 <Loader2 size={40} className="animate-spin" />
+                            </div>
+                        ) : addresses && addresses.length === 0 ? (
+                            // display message if no addresses
+                            <div className="col-span-12">
+                                <div className="mx-auto flex flex-col items-center justify-center gap-3 rounded-md border border-red-500 bg-red-500/20 py-2">
+                                    <Frown size={40} className="text-red-500" />
+                                    <p className="rounded-md px-2 text-center text-lg text-red-500">
+                                        You have no addresses yet. Please add
+                                        one.
+                                    </p>
+                                </div>
                             </div>
                         ) : (
                             addresses &&

@@ -1,3 +1,4 @@
+import React from 'react'
 import useDarkMode from '../../../utililties/customHook/useDarkMode'
 
 type InputProps = {
@@ -6,6 +7,7 @@ type InputProps = {
     variantClass?: string
     errorMessage?: string
     errorMessageVariantClass?: string
+    htmlElement?: React.ReactNode
 } & React.DetailedHTMLProps<
     React.InputHTMLAttributes<HTMLInputElement>,
     HTMLInputElement
@@ -17,6 +19,7 @@ export default function Input({
     variantClass,
     errorMessage,
     errorMessageVariantClass,
+    htmlElement,
     ...props
 }: InputProps) {
     const { isDarkMode } = useDarkMode()
@@ -25,14 +28,17 @@ export default function Input({
             <label htmlFor={`${labelFor}`} className="font-bold">
                 {labelTitle}
             </label>
-            <input
-                className={`rounded-md ${variantClass} ${
-                    isDarkMode
-                        ? 'focus:border-barakaprimary-dessert bg-zinc-800 focus:border-2 focus:shadow-md focus:ring-0 focus:shadow-amber-400/50'
-                        : 'focus:border-2 focus:border-sky-500 focus:shadow-md focus:ring-0 focus:shadow-sky-400/50'
-                }`}
-                {...props}
-            />
+            <div className="flex items-center">
+                {htmlElement}
+                <input
+                    className={`w-full rounded-md ${variantClass} ${
+                        isDarkMode
+                            ? 'focus:border-barakaprimary-dessert bg-zinc-800 focus:border-2 focus:shadow-md focus:ring-0 focus:shadow-amber-400/50'
+                            : 'focus:border-2 focus:border-sky-500 focus:shadow-md focus:ring-0 focus:shadow-sky-400/50'
+                    }`}
+                    {...props}
+                />
+            </div>
             {errorMessage && (
                 <p
                     className={`text-xs text-red-500 ${errorMessageVariantClass}`}

@@ -1,7 +1,6 @@
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { useEffect } from 'react'
 import { Loader2 } from 'lucide-react'
-import ToastSweetAlert from '../components/elements/Alert/Toast/ToastSweetAlert'
 import { useAuth } from '../utililties/customHook/useAuth'
 import axios from 'axios'
 import { URLBase } from '../utililties/api/urlBase'
