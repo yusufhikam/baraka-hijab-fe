@@ -46,51 +46,6 @@ export default function GoogleCallbackPage() {
         }
     }, [searchParams, navigate, location, setToken, setUser])
 
-    // useEffect(() => {
-    //     console.log(window.location.href)
-    //     console.log('GoogleCallbackPage rendered')
-
-    //     const token = searchParams.get('token')
-    //     const user = searchParams.get('user')
-    //     console.log({ token, user })
-
-    //     if (token && user) {
-    //         try {
-    //             const userData = JSON.parse(atob(user))
-
-    //             localStorage.setItem('auth_token', token)
-    //             localStorage.setItem('user', JSON.stringify(userData))
-
-    //             ToastSweetAlert({
-    //                 iconToast: 'success',
-    //                 titleToast: 'Login dengan Google berhasil',
-    //                 onConfirm: () =>
-    //                     navigate('/', {
-    //                         state: { fromGoogleAuth: true },
-    //                         replace: true,
-    //                     }),
-    //             })
-    //         } catch (e) {
-    //             console.error('Invalid user data', e)
-    //             navigate('/login', {
-    //                 state: { error: 'Invalid user data from Google' },
-    //                 replace: true,
-    //             })
-    //         }
-    //     } else {
-    //         // Cek jika ada error
-    //         const error = searchParams.get('error')
-    //         if (error) {
-    //             navigate('/login', {
-    //                 state: { error: decodeURIComponent(error) },
-    //                 replace: true,
-    //             })
-    //         } else {
-    //             navigate('/login', { replace: true })
-    //         }
-    //     }
-    // }, [searchParams, navigate])
-
     return (
         <div className="flex min-h-screen flex-col items-center justify-center bg-gray-100">
             <h1 className="mt-10 text-center text-2xl font-bold">

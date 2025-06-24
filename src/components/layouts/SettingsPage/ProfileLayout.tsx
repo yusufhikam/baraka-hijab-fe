@@ -7,10 +7,12 @@ import Breadcrumb from '../../fragments/Breadcrumb/Breadcrumb'
 import { UserProfileType } from '../../../types/UserProfileType'
 import H1 from '../../elements/Title Header/H1'
 import Button from '../../elements/Button/Button'
+import useUpdateProfileUser from '../../../utililties/customHook/useUpdateProfileUser'
 
 const ProfileLayout = () => {
     const { isDarkMode } = useDarkMode()
     const { user } = useAuth()
+    const { mutate, isPending } = useUpdateProfileUser()
 
     const {
         register,
@@ -22,6 +24,11 @@ const ProfileLayout = () => {
             phone_number: user?.phone_number,
         },
     })
+
+    const onSubmit = (data: UserProfileType) => {
+        mutate({ userId: user?.id ?? null, data })
+    }
+
     return (
         <div className={`flex w-full flex-col gap-5`}>
             <div className="mx-auto mt-5">
@@ -51,7 +58,7 @@ const ProfileLayout = () => {
                 </p>
 
                 <form
-                    action=""
+                    onSubmit={handleSubmit(onSubmit)}
                     className="flex w-full flex-col gap-5 sm:w-1/2 lg:w-1/3"
                 >
                     <Input
@@ -99,7 +106,14 @@ const ProfileLayout = () => {
 
                     <Button
                         type="submit"
-                        variant={`${isDarkMode ? 'hover:bg-barakaprimary-madder text-barakaprimary-madder hover:text-white bg-white' : 'bg-black text-white hover:bg-barakaprimary-madder hover:text-white'} w-full rounded-md p-2 font-semibold transition-all duration-300`}
+                        disabled={isPending}
+                        variant={`${
+                            isDarkMode
+                                ? 'hover:bg-barakaprimary-madder text-barakaprimary-madder hover:text-white bg-white'
+                                : 'bg-black text-white hover:bg-barakaprimary-madder hover:text-white'
+                        }
+                        ${isPending && 'cursor-wait'}
+                        w-full rounded-md p-2 font-semibold transition-all duration-300`}
                     >
                         Update
                     </Button>
