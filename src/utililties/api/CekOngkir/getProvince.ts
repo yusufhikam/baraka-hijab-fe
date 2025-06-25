@@ -1,5 +1,4 @@
-import axios from 'axios'
-import { URLBase } from '../urlBase'
+import Api from '../Auth/Api'
 
 type ProvincesType = {
     code: string
@@ -7,7 +6,7 @@ type ProvincesType = {
 }
 export const getProvince = async (): Promise<ProvincesType[]> => {
     try {
-        const res = await axios.get(`${URLBase}/rajaongkir/provinces`)
+        const res = await Api.get(`/rajaongkir/provinces`)
 
         return res.data.data
     } catch (error) {

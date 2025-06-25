@@ -1,5 +1,5 @@
-import axios from 'axios'
-import { URLBase } from '../urlBase'
+
+import Api from '../Auth/Api'
 
 export type calculateCostType = {
     name: string
@@ -24,7 +24,7 @@ export const cekOngkir = async ({
     courier,
 }: costType): Promise<calculateCostType[]> => {
     try {
-        const res = await axios.post(`${URLBase}/rajaongkir/cost`, {
+        const res = await Api.post(`/rajaongkir/cost`, {
             origin,
             destination,
             weight,

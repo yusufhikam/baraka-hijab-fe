@@ -1,5 +1,4 @@
-import axios from 'axios'
-import { URLBase } from '../urlBase'
+import Api from '../Auth/Api'
 
 type KecamatanType = {
     code: string
@@ -10,8 +9,8 @@ export const getKecamatans = async (
     code_kabupaten: string
 ): Promise<KecamatanType[]> => {
     try {
-        const res = await axios.get(
-            `${URLBase}/rajaongkir/kecamatan/${code_kabupaten}`
+        const res = await Api.get(
+            `/rajaongkir/kecamatan/${code_kabupaten}`
         )
 
         return res.data.data

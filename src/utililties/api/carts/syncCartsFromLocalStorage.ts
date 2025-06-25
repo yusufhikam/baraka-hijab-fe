@@ -1,23 +1,19 @@
-import axios from "axios";
-import { URLBase } from "../urlBase";
+
+import Api from "../Auth/Api";
 
 const syncCartsFromLocalStorage = async () => {
     const localCart = JSON.parse(localStorage.getItem('carts') || '[]');
 
-    if(localCart.length === 0) return;
+    if (localCart.length === 0) return;
 
-    try{
-        await axios.post(`${URLBase}/carts/sync`, {
-            carts: localCart // input carts
-        }, {
-            headers: {
-                'Authorization' : `Bearer ${localStorage.getItem('auth_token')}`
-            }
+    try {
+        await Api.post(`/carts/sync`, {
+            data: localCart // input carts
         });
 
         localStorage.removeItem('carts');
 
-    }catch(error){
+    } catch (error) {
         console.error(error);
     }
 }

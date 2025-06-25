@@ -1,5 +1,7 @@
 import { Navigate } from 'react-router-dom'
 import { useAuth } from '../../customHook/useAuth'
+import { Loader2 } from 'lucide-react'
+import H1 from '../../../components/elements/Title Header/H1'
 
 type ProtectedRouteProps = {
     allowedRoles?: 'customer'
@@ -15,7 +17,12 @@ export const ProtectedRoute = ({
     const { isAuthenticated, user, logout, loading } = useAuth()
 
     if (loading) {
-        return <div>Loading...</div>
+        return (
+            <div className="flex h-screen w-full items-center justify-center gap-3">
+                <Loader2 size={40} className="animate-spin" />
+                <H1>Loading...</H1>
+            </div>
+        )
     }
 
     if (!isAuthenticated) {

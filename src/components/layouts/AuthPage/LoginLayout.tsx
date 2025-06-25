@@ -33,7 +33,7 @@ const LoginLayout = ({
     const [loadingGoogle, setLoadingGoogle] = useState<boolean>(false)
     const handleAuthGoogle = () => {
         setLoadingGoogle(true)
-        window.location.href = `http://127.0.0.1:8000/auth/google/redirect`
+        window.location.href = `http://localhost:8000/auth/google/redirect`
     }
 
     return (
@@ -73,7 +73,7 @@ const LoginLayout = ({
                     labelTitle="Email"
                     type="email"
                     placeholder="Enter your email"
-                    autoComplete="off"
+                    // autoComplete="off"
                     variantClass={`font-poppins-semibold text-black`}
                     errorMessage={errors.email?.message}
                     errorMessageVariantClass="font-poppins-regular bg-red-500/15 px-2 py-1 rounded-sm border border-red-500"

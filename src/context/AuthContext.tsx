@@ -1,20 +1,17 @@
-import axios from 'axios'
 import { createContext, useEffect, useState } from 'react'
-import { URLBase } from '../utililties/api/urlBase'
 import syncCartsFromLocalStorage from '../utililties/api/carts/syncCartsFromLocalStorage'
 import ToastSweetAlert from '../components/elements/Alert/Toast/ToastSweetAlert'
 import { UserType } from '../types/UserType'
 import { LoginType } from '../types/LoginType'
+import Api from '../utililties/api/Auth/Api'
 
 type AuthContextType = {
     user: UserType | null
-    token: string | null
     login: (data: LoginType) => Promise<void>
     logout: () => void
     isAuthenticated: boolean
     loading: boolean
     setUser: React.Dispatch<React.SetStateAction<UserType | null>>
-    setToken: React.Dispatch<React.SetStateAction<string | null>>
 }
 
 type AuthContextProviderProps = {
@@ -25,34 +22,36 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const AuthProvider = ({ children }: AuthContextProviderProps) => {
     const [user, setUser] = useState<UserType | null>(null)
-    const [token, setToken] = useState<string | null>(null)
     const [loading, setLoading] = useState(true)
 
-    // cek localstorage pada saat pertama kali render app
+    // check auth cookie
     useEffect(() => {
-        const storedToken = localStorage.getItem('auth_token')
-        const storedUser = localStorage.getItem('user')
+        const checkAuth = async () => {
+            try {
+                // getCsrfToken()
+                const res = await Api.get(`/user`)
 
-        if (storedToken && storedUser) {
-            setToken(storedToken)
-            setUser(JSON.parse(storedUser))
+                setUser(res.data)
+            } catch (error) {
+                console.log('Not Authencicated', error)
+            } finally {
+                setLoading(false)
+            }
         }
 
-        setLoading(false)
+        checkAuth()
     }, [])
 
     // login function
     const login = async (data: LoginType) => {
         try {
-            const res = await axios.post(`${URLBase}/auth/login`, data)
+            await Api.get('/sanctum/csrf-cookie')
+            await Api.post(`/auth/login`, data)
 
-            const token = res.data.auth_token
-
-            const userRes = await axios.get(`${URLBase}/user`, {
-                headers: { Authorization: `Bearer ${token}` },
-            })
+            const userRes = await Api.get(`/user`)
 
             const userData = userRes.data
+            setUser(userData)
 
             if (userData.role !== 'customer') {
                 // jika role bukan customer
@@ -77,32 +76,25 @@ export const AuthProvider = ({ children }: AuthContextProviderProps) => {
                 })
             }
 
-            // simpan token dan user ke state
-            setToken(res.data.auth_token)
-            setUser(userData)
-
-            // simpan token dan user ke localstorage
-            localStorage.setItem('auth_token', res.data.auth_token)
-            localStorage.setItem('user', JSON.stringify(userRes.data))
-
-            return res.data
+            return userData
         } catch (error) {
             console.error(error)
             throw new Error('Login failed')
         }
     }
 
-    // logout function
-    const logout = () => {
-        setToken(null)
-        setUser(null)
-        localStorage.removeItem('auth_token')
-        localStorage.removeItem('user')
+    const logout = async () => {
+        try {
+            await Api.post(`/auth/logout`)
 
-        window.location.href = '/'
+            setUser(null)
+            window.location.href = '/'
+        } catch (error) {
+            console.log('logout error', error)
+        }
     }
 
-    const isAuthenticated = !!token
+    const isAuthenticated = !!user
 
     // sync data carts from localstorage to server
     useEffect(() => {
@@ -116,12 +108,10 @@ export const AuthProvider = ({ children }: AuthContextProviderProps) => {
         <AuthContext.Provider
             value={{
                 user,
-                token,
                 login,
                 logout,
                 isAuthenticated,
                 loading,
-                setToken,
                 setUser,
             }}
         >

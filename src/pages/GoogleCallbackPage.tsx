@@ -1,50 +1,8 @@
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import { useEffect } from 'react'
 import { Loader2 } from 'lucide-react'
-import { useAuth } from '../utililties/customHook/useAuth'
-import axios from 'axios'
-import { URLBase } from '../utililties/api/urlBase'
+import useGoogleCallback from '../utililties/customHook/useGoogleCallback'
 
 export default function GoogleCallbackPage() {
-    const [searchParams] = useSearchParams()
-    const navigate = useNavigate()
-    const { setToken, setUser } = useAuth()
-
-    const location = useLocation()
-
-    useEffect(() => {
-        const token = searchParams.get('token')
-
-        if (token) {
-            const verifyToken = async () => {
-                try {
-                    const userRes = await axios.get(`${URLBase}/user`, {
-                        headers: { Authorization: `Bearer ${token}` },
-                    })
-
-                    // simpan localstorage
-                    localStorage.setItem('auth_token', token)
-                    localStorage.setItem('user', JSON.stringify(userRes.data))
-
-                    setToken(token)
-                    setUser(userRes.data)
-
-                    // redirect halaman utama
-                    navigate('/', { replace: true })
-                } catch (error) {
-                    console.error(error)
-                    navigate('/login', {
-                        state: { error: 'Login failed. Please try again.' },
-                        replace: true,
-                    })
-                }
-            }
-
-            verifyToken()
-        } else {
-            navigate('/login', { replace: true })
-        }
-    }, [searchParams, navigate, location, setToken, setUser])
+    useGoogleCallback()
 
     return (
         <div className="flex min-h-screen flex-col items-center justify-center bg-gray-100">
