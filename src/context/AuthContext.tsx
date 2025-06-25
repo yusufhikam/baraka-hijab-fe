@@ -45,7 +45,8 @@ export const AuthProvider = ({ children }: AuthContextProviderProps) => {
     // login function
     const login = async (data: LoginType) => {
         try {
-            await Api.get('/sanctum/csrf-cookie')
+            await Api.get('/sanctum/csrf-cookie') // get csrf token
+
             await Api.post(`/auth/login`, data)
 
             const userRes = await Api.get(`/user`)
