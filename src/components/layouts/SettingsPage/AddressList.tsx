@@ -9,17 +9,18 @@ import { Check, CheckCircle2, Edit, Trash2 } from 'lucide-react'
 import Modal from '../../elements/Modal/Modal'
 import H1 from '../../elements/Title Header/H1'
 import FormAddress from './FormAddress'
+import usePrimaryAddress from '../../../utililties/customHook/usePrimaryAddress'
 
 type AddressListProps = {
     address: AddressType
     selectedEdit: {
         isOpen: boolean
-        address: AddressType | null
+        address: AddressType | undefined
     }
     setSelectedEdit: React.Dispatch<
         React.SetStateAction<{
             isOpen: boolean
-            address: AddressType | null
+            address: AddressType | undefined
         }>
     >
     onUpdate: (data: AddressTypePayload) => void
@@ -36,6 +37,7 @@ const AddressList = memo(
     }: AddressListProps) => {
         const { user } = useAuth()
         const { isDarkMode } = useDarkMode()
+        const { primaryAddress } = usePrimaryAddress()
 
         // SET MAIN ADDRESS
         const { isPending, openMenuAction, setMainAddress, setOpenMenuAction } =
@@ -119,7 +121,7 @@ const AddressList = memo(
                         type="button"
                         variant={`bg-red-500 rounded-full p-2 hover:shadow-md hover:shadow-black/30  transition-all duration-300  ${openMenuAction ? 'scale-100 hover:scale-120' : 'scale-0 group-hover:scale-100 hover:scale-120'}`}
                         onClick={() => {
-                            onDelete(address.id)
+                            onDelete(address.id!)
                         }}
                     >
                         <Trash2 />
@@ -133,13 +135,17 @@ const AddressList = memo(
                     >
                         <Edit />
                     </Button>
-                    <Button
-                        type="button"
-                        variant={`bg-sky-500 rounded-full p-2 hover:shadow-md hover:shadow-black/30  transition-all duration-300 ${openMenuAction ? 'scale-100 hover:scale-120' : 'scale-0 group-hover:scale-100 hover:scale-120'}`}
-                        onClick={() => setMainAddress(address.id)}
-                    >
-                        <Check />
-                    </Button>
+
+                    {/* hide check button or set primary address button if address is primary */}
+                    {primaryAddress?.id != address.id && (
+                        <Button
+                            type="button"
+                            variant={`bg-sky-500 rounded-full p-2 hover:shadow-md hover:shadow-black/30  transition-all duration-300 ${openMenuAction ? 'scale-100 hover:scale-120' : 'scale-0 group-hover:scale-100 hover:scale-120'}`}
+                            onClick={() => setMainAddress(address.id!)}
+                        >
+                            <Check />
+                        </Button>
+                    )}
                 </div>
 
                 {/* DISPLAY MAIN ADDRESS CHECKLIST */}
@@ -156,7 +162,7 @@ const AddressList = memo(
                             onClose={() =>
                                 setSelectedEdit({
                                     isOpen: false,
-                                    address: null,
+                                    address: undefined,
                                 })
                             }
                             animationType="scale"
@@ -181,7 +187,7 @@ const AddressList = memo(
                                     onClick={() =>
                                         setSelectedEdit({
                                             isOpen: false,
-                                            address: null,
+                                            address: undefined,
                                         })
                                     }
                                 >

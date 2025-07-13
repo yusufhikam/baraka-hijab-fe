@@ -86,10 +86,10 @@ export const useSetPrimaryAddress = () => {
     // untuk open menu button action [delete, edit, modal detail, set main address]
     const [openMenuAction, setOpenMenuAction] = useState<{
         isOpen: boolean
-        addressId: number | null
+        addressId: number | undefined
     }>({
         isOpen: false,
-        addressId: null,
+        addressId: undefined,
     })
 
     const queryClient = useQueryClient() // for invalidate cache
@@ -98,6 +98,8 @@ export const useSetPrimaryAddress = () => {
         mutationFn: (addressId: number) => setPrimaryAddress(addressId),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['addresses'] })
+            queryClient.invalidateQueries({ queryKey: ['primaryaddress'] })
+
             ToastSweetAlert({
                 iconToast: 'success',
                 titleToast: 'Success set main address',

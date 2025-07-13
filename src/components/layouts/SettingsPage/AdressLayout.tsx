@@ -21,15 +21,15 @@ const AddressLayout = () => {
     const [openModalAdd, setOpenModalAdd] = useState<boolean>(false)
     const [selectedEdit, setSelectedEdit] = useState<{
         isOpen: boolean
-        address: AddressType | null
-    }>({ isOpen: false, address: null })
+        address: AddressType | undefined
+    }>({ isOpen: false, address: undefined })
     // ✅ GET DATA ADDRESS
     const { addresses, isLoadingAddresses } = useGetAddress()
     // ✅ CREATE ADDRESS
     const { storeAddress, isLoadingStoreAddress } = useCreateAddress()
     // ✅ UPDATE ADDRESS
     const { updateAddressData } = useUpdateAddress(() =>
-        setSelectedEdit({ isOpen: false, address: null })
+        setSelectedEdit({ isOpen: false, address: undefined })
     )
     // ❌ DELETE ADDRESS
     const { mutate: onDelete } = useDeleteAddress()
