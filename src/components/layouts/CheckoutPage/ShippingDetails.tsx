@@ -5,14 +5,13 @@ import PrimaryAddressCard from './PrimaryAddressCard'
 import Select from '../../elements/FormElement/Select'
 import CourierCardList from './CourierCardList'
 import useDarkMode from '../../../utililties/customHook/useDarkMode'
-import { useQuery } from '@tanstack/react-query'
-import getPrimaryAddress from '../../../utililties/api/CekOngkir/getPrimaryAddress'
 import { useForm } from 'react-hook-form'
 import { useCalculateShipping } from '../../../utililties/customHook/useAddressMutation'
 import { useCallback } from 'react'
-import { useWilayahName } from '../../../utililties/customHook/useAddressOptions'
 import { calculateCostType } from '../../../utililties/api/CekOngkir/cekOngkir'
 import { Link } from 'react-router-dom'
+import usePrimaryAddress from '../../../utililties/customHook/usePrimaryAddress'
+import { useCart } from '../../../utililties/customHook/useCart'
 
 type shippingDetailsProps = {
     selectedCourier: calculateCostType | null
@@ -25,14 +24,11 @@ const ShippingDetails = ({
     setSelectedCourier,
 }: shippingDetailsProps) => {
     const { isDarkMode } = useDarkMode()
+    const { carts } = useCart()
+    const emptyCart = !carts || carts.length === 0
 
-    const { data: primaryAddress, isLoading: isLoadingAddress } = useQuery({
-        queryKey: ['primaryaddress'],
-        queryFn: () => getPrimaryAddress(),
-        staleTime: 1000 * 60 * 5,
-    })
-    // wilayah name
-    const { wilayahName } = useWilayahName(primaryAddress)
+    // get primary address
+    const { primaryAddress, isLoadingAddress } = usePrimaryAddress()
 
     // for form calculate shipping
     const {
@@ -90,12 +86,13 @@ const ShippingDetails = ({
                         size={40}
                         className="text-barakaprimary-madder m-auto animate-spin"
                     />
+                ) : !primaryAddress ? (
+                    <p className="text-center text-sm text-red-500">
+                        No address found, please add a main address.
+                    </p>
                 ) : (
                     // PRIMARY ADDRESS CARD
-                    <PrimaryAddressCard
-                        primaryAddress={primaryAddress}
-                        wilayahName={wilayahName}
-                    />
+                    <PrimaryAddressCard primaryAddress={primaryAddress} />
                 )}
             </div>
 
@@ -109,16 +106,18 @@ const ShippingDetails = ({
                 <div className="flex flex-col items-center gap-2">
                     <form
                         onSubmit={handleSubmit(onSubmit)}
-                        className="flex w-full flex-col gap-5"
+                        className={`flex w-full flex-col gap-5`}
                     >
                         <Select
+                            title={`${emptyCart ? 'Add items to cart first' : 'Select Courier'}`}
+                            disabled={emptyCart}
                             labelFor="courier"
                             labelTitle="Courier"
                             id="courier"
                             {...register('courier', {
                                 required: 'Please select a courier',
                             })}
-                            variantClass={` ${watch('courier') && 'ring-2 border-green-500 ring-green-300 shadow-lg shadow-green-500/40'}`}
+                            variantClass={` ${emptyCart && 'cursor-not-allowed'} ${watch('courier') && 'ring-2 border-green-500 ring-green-300 shadow-lg shadow-green-500/40'}`}
                         >
                             <option value="">-- Select Courier --</option>
                             <option value="jne">JNE</option>
@@ -134,6 +133,7 @@ const ShippingDetails = ({
                         <Button
                             type="submit"
                             variant={` flex items-center justify-center gap-2 text-white w-full py-2 rounded-md font-bold tracking-widest 
+                                        ${emptyCart && 'cursor-not-allowed opacity-50'}
                                         ${isDarkMode ? 'bg-barakaprimary-madder hover:bg-barakaprimary-snow hover:text-barakaprimary-madder' : 'bg-black hover:bg-barakaprimary-madder '}
                                         ${isCalculating && 'cursor-wait '}`}
                             disabled={isCalculating}

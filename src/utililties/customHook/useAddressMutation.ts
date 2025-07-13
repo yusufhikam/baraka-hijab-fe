@@ -3,7 +3,7 @@ import createAddress from '../api/addresses/createAddress'
 import { AddressType, AddressTypePayload } from '../../types/AddressType'
 import ToastSweetAlert from '../../components/elements/Alert/Toast/ToastSweetAlert'
 import deleteAddress from '../api/addresses/deleteAddress'
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import getAddress from '../api/addresses/getAddress'
 import setPrimaryAddress from '../api/addresses/setPrimaryAddress'
 import updateAddress from '../api/addresses/updateAddress'
@@ -11,6 +11,7 @@ import { useForm } from 'react-hook-form'
 import { calculateCostType, cekOngkir } from '../api/CekOngkir/cekOngkir'
 import { useCart } from './useCart'
 import { useSearchParams } from 'react-router-dom'
+import { originAdminShipping } from '../helper/Admin/originShipping'
 
 // GET DATA ADDRESS
 
@@ -170,20 +171,25 @@ export const useCalculateShipping = ({
     const [, setSearchParams] = useSearchParams()
     const { carts } = useCart()
     const [courierShipping, setCourierShipping] = useState<
-        calculateCostType[] | null
-    >(null)
+        calculateCostType[]
+    >([])
 
     const itemsWeight = useMemo(() => {
         return carts?.reduce(
             (acc, item) => acc + item.productVariant.weight * item.quantity,
             0
+
         )
     }, [carts])
+
+    console.log(itemsWeight, 'gr')
+
+    const origin = useCallback(() => originAdminShipping(), [])
 
     const { mutate, isPending } = useMutation({
         mutationFn: () =>
             cekOngkir({
-                origin: '52965', // hard code for origin shipping postal code from Sale Rembang
+                origin: origin(), // hard code for origin shipping postal code from Sale Rembang
                 destination: address?.postal_code,
                 weight: itemsWeight,
                 courier,

@@ -23,6 +23,8 @@ const AddressLayout = () => {
         isOpen: boolean
         address: AddressType | null
     }>({ isOpen: false, address: null })
+    // ✅ GET DATA ADDRESS
+    const { addresses, isLoadingAddresses } = useGetAddress()
     // ✅ CREATE ADDRESS
     const { storeAddress, isLoadingStoreAddress } = useCreateAddress()
     // ✅ UPDATE ADDRESS
@@ -31,11 +33,6 @@ const AddressLayout = () => {
     )
     // ❌ DELETE ADDRESS
     const { mutate: onDelete } = useDeleteAddress()
-
-    // set params
-
-    // ✅ GET DATA ADDRESS
-    const { addresses, isLoadingAddresses } = useGetAddress()
     //✅ handle Add Address
     const handleCreateAddress = useCallback(
         (data: AddressTypePayload) => {

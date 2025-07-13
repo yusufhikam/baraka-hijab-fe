@@ -5,6 +5,11 @@ import { calculateCostType } from '../../../utililties/api/CekOngkir/cekOngkir'
 import { useMemo } from 'react'
 import { Loader2 } from 'lucide-react'
 import useDarkMode from '../../../utililties/customHook/useDarkMode'
+import Button from '../../elements/Button/Button'
+import useCheckout from '../../../utililties/customHook/useCheckout'
+import usePrimaryAddress from '../../../utililties/customHook/usePrimaryAddress'
+import ToastSweetAlert from '../../elements/Alert/Toast/ToastSweetAlert'
+import { CheckoutType } from '../../../types/checkoutType'
 
 type BillingDetailsProps = {
     selectedCourier: calculateCostType | null
@@ -12,8 +17,13 @@ type BillingDetailsProps = {
 
 const BillingDetails = ({ selectedCourier }: BillingDetailsProps) => {
     const { isDarkMode } = useDarkMode()
+    // get primary address
+    const { primaryAddress } = usePrimaryAddress()
+    // handle cart items
     const { carts, subTotalPerVariant, formatCurrency, subTotal, isLoading } =
         useCart()
+    // handle checkout payment
+    const { handlePayment, isLoadingPayment } = useCheckout()
 
     const TotalPayment = useMemo(() => {
         if (selectedCourier) {
@@ -23,7 +33,44 @@ const BillingDetails = ({ selectedCourier }: BillingDetailsProps) => {
         }
     }, [subTotal, selectedCourier])
 
-    return (
+    const handleCheckout = () => {
+        if (!carts || carts.length === 0) {
+            ToastSweetAlert({
+                iconToast: 'error',
+                titleToast: 'Failed to checkout, your cart is empty',
+            })
+
+            return
+        }
+
+        if (!primaryAddress) {
+            ToastSweetAlert({
+                iconToast: 'error',
+                titleToast: 'Failed to checkout, please add your address',
+            })
+            return
+        }
+
+        const payload: CheckoutType = {
+            address_id: primaryAddress.id,
+            total_price: TotalPayment,
+            items: carts.map((item) => ({
+                product_variant_id: item.productVariant.id,
+                price: item.productVariant.product.price,
+                quantity: item.quantity,
+            })),
+        }
+
+        handlePayment(payload)
+    }
+
+    return carts?.length === 0 ? (
+        <div className="flex h-[50vh] items-center justify-center">
+            <H1 fontSize="text-2xl" fontWeight="font-semibold">
+                Your shopping bag is empty
+            </H1>
+        </div>
+    ) : (
         <>
             <H1>Your Orders</H1>
 
@@ -133,6 +180,34 @@ const BillingDetails = ({ selectedCourier }: BillingDetailsProps) => {
                                 </H1>
                             </div>
                         </div>
+                        <Button
+                            disabled={!selectedCourier}
+                            type="submit"
+                            variant={`flex gap-2 items-center justify-center bg-barakaprimary-madder text-white w-full rounded-sm py-1 font-poppins-bold 
+                            
+                                ${
+                                    !selectedCourier
+                                        ? 'cursor-not-allowed opacity-50'
+                                        : isDarkMode
+                                          ? 'hover:bg-barakaprimary-snow hover:text-barakaprimary-madder'
+                                          : 'hover:bg-zinc-800'
+                                }
+                                ${isLoadingPayment && 'animate-pulse cursor-wait'}
+                                `}
+                            onClick={handleCheckout}
+                        >
+                            {isLoadingPayment ? (
+                                <>
+                                    <Loader2
+                                        size={20}
+                                        className="animate-spin"
+                                    />
+                                    <p>PROCESSING</p>
+                                </>
+                            ) : (
+                                'CHECKOUT'
+                            )}
+                        </Button>
                     </>
                 )}
             </div>

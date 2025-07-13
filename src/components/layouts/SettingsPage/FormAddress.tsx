@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form'
 import Select from '../../elements/FormElement/Select'
 import { AddressTypePayload } from '../../../types/AddressType'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import {
     useKabupatens,
     useKecamatans,
@@ -14,6 +14,7 @@ import TextArea from '../../elements/FormElement/TextArea'
 import { Loader2 } from 'lucide-react'
 import { useAuth } from '../../../utililties/customHook/useAuth'
 import { useUpdateAddress } from '../../../utililties/customHook/useAddressMutation'
+import H1 from '../../elements/Title Header/H1'
 
 type FormAddressProps = {
     onSubmit?: (data: AddressTypePayload) => void
@@ -31,6 +32,7 @@ const FormAddress = ({
 }: FormAddressProps) => {
     const { user } = useAuth()
     const { isLoadingUpdate } = useUpdateAddress()
+    const [isFormReady, setIsFormReady] = useState<boolean>(false)
 
     const {
         register,
@@ -71,6 +73,25 @@ const FormAddress = ({
     const { data: kelurahans = [], isLoading: isLoadingKelurahan } =
         useKelurahans(selectedCodeKecamatan)
 
+    // set loading state for ready form data edit
+    useEffect(() => {
+        if (
+            defaultValues &&
+            !isLoadingProvinces &&
+            !isLoadingKabupaten &&
+            !isLoadingKecamatan &&
+            !isLoadingKelurahan
+        ) {
+            setIsFormReady(true)
+        }
+    }, [
+        defaultValues,
+        isLoadingProvinces,
+        isLoadingKabupaten,
+        isLoadingKecamatan,
+        isLoadingKelurahan,
+    ])
+
     // set POSTAL CODE saat kelurahan sudah dipilih
     useEffect(() => {
         const findPostalCode = kelurahans.find(
@@ -81,7 +102,53 @@ const FormAddress = ({
         }
     }, [selectedCodeKelurahan, kelurahans, setValue])
 
-    return (
+    // set name wilayah from selectedCode wilayah to fill hidden form for provinsi_name, dll.
+    useEffect(() => {
+        if (selectedCodeProvinsi) {
+            const name =
+                provinces.find((prov) => prov.code === selectedCodeProvinsi)
+                    ?.name || ''
+            setValue('provinsi_name', name)
+        }
+
+        if (selectedCodeKabupaten) {
+            const name =
+                kabupatens.find((kab) => kab.code === selectedCodeKabupaten)
+                    ?.name || ''
+            setValue('kabupaten_name', name)
+        }
+
+        if (selectedCodeKecamatan) {
+            const name =
+                kecamatans.find((kec) => kec.code === selectedCodeKecamatan)
+                    ?.name || ''
+            setValue('kecamatan_name', name)
+        }
+
+        if (selectedCodeKelurahan) {
+            const name =
+                kelurahans.find((kel) => kel.code === selectedCodeKelurahan)
+                    ?.name || ''
+            setValue('kelurahan_name', name)
+        }
+    }, [
+        selectedCodeProvinsi,
+        selectedCodeKabupaten,
+        selectedCodeKecamatan,
+        selectedCodeKelurahan,
+        provinces,
+        kabupatens,
+        kecamatans,
+        kelurahans,
+        setValue,
+    ])
+
+    return formFor === 'edit' && !isFormReady ? (
+        <div className="flex h-[80%] items-center justify-center gap-2">
+            <Loader2 size={40} className="animate-spin" />
+            <H1>Loading Data...</H1>
+        </div>
+    ) : (
         <form
             onSubmit={handleSubmit(onSubmit!)}
             className={`flex flex-col gap-5 ${variant}`}
@@ -146,6 +213,8 @@ const FormAddress = ({
                     </option>
                 ))}
             </Select>
+            <input type="hidden" {...register('provinsi_name')} />
+
             <Select
                 {...register('kabupaten', {
                     required: 'Kabupaten is required',
@@ -163,6 +232,8 @@ const FormAddress = ({
                     </option>
                 ))}
             </Select>
+            <input type="hidden" {...register('kabupaten_name')} />
+
             <Select
                 {...register('kecamatan', {
                     required: 'Kecamatan is required',
@@ -180,6 +251,8 @@ const FormAddress = ({
                     </option>
                 ))}
             </Select>
+            <input type="hidden" {...register('kecamatan_name')} />
+
             <Select
                 {...register('kelurahan', {
                     required: 'Kelurahan is required',
@@ -197,6 +270,8 @@ const FormAddress = ({
                     </option>
                 ))}
             </Select>
+            <input type="hidden" {...register('kelurahan_name')} />
+
             <Input
                 {...register('postal_code', {
                     required: 'Postal Code is required',

@@ -42,7 +42,7 @@ const MiniDisplayCartList = memo(
                 isOpen={showMiniCart}
                 onClose={() => setShowMiniCart(false)}
                 animationType="slideDown"
-                variant={`fixed  border-none top-0 sm:top-20 md:top-16 w-full sm:w-[60%] lg:w-[40%] z-2 shadow-md p-2 sm:rounded-md transition-all duration-300  bg-gray-900 sm:bg-barakaprimary-snow text-white sm:text-black shadow-gray-500 ${carts?.length === 0 && 'flex flex-col items-center justify-center'}
+                variant={`fixed  border-none top-0 sm:top-20 md:top-16 w-full sm:w-[60%] lg:w-[40%] z-2 shadow-md p-2 sm:rounded-md transition-all duration-300  bg-zinc-900 sm:bg-barakaprimary-snow text-white sm:text-black shadow-gray-500 ${carts?.length === 0 && 'flex flex-col items-center justify-center'}
             ${
                 showMiniCart
                     ? `opacity-100  pointer-events-auto translate-x-0 inset-x-0 sm:inset-x-auto sm:right-5 max-h-full h-screen sm:h-fit ${carts?.length === 0 && 'sm:h-[10vh]'} sm:max-h-[80vh]`
@@ -193,9 +193,18 @@ const MiniDisplayCartList = memo(
                         })
                     ) : (
                         // EMPTY CART
-                        <h1 className="font-krona-one-regular text-center">
-                            Your Cart is Empty
-                        </h1>
+                        <>
+                            <h1 className="font-krona-one-regular text-center">
+                                Your Shopping Bag is Empty
+                            </h1>
+
+                            <Link
+                                to={'/shop/products'}
+                                className="border-barakaprimary-madder hover:bg-barakaprimary-madder my-5 rounded-sm border text-center transition-all duration-200 hover:font-semibold hover:text-white"
+                            >
+                                Shopping Now
+                            </Link>
+                        </>
                     )}
                 </div>
 

@@ -1,4 +1,4 @@
-import { memo, useMemo } from 'react'
+import { memo } from 'react'
 import Card from '../../elements/Card/Card'
 import { useAuth } from '../../../utililties/customHook/useAuth'
 import useDarkMode from '../../../utililties/customHook/useDarkMode'
@@ -6,12 +6,6 @@ import { AddressType, AddressTypePayload } from '../../../types/AddressType'
 import { useSetPrimaryAddress } from '../../../utililties/customHook/useAddressMutation'
 import Button from '../../elements/Button/Button'
 import { Check, CheckCircle2, Edit, Trash2 } from 'lucide-react'
-import {
-    useKabupatens,
-    useKecamatans,
-    useKelurahans,
-    useProvinces,
-} from '../../../utililties/customHook/useAddressOptions'
 import Modal from '../../elements/Modal/Modal'
 import H1 from '../../elements/Title Header/H1'
 import FormAddress from './FormAddress'
@@ -43,40 +37,6 @@ const AddressList = memo(
         const { user } = useAuth()
         const { isDarkMode } = useDarkMode()
 
-        // get data wilayah for searching name
-        const { data: provinces } = useProvinces()
-        const { data: kabupatens } = useKabupatens(address.provinsi)
-        const { data: kecamatans } = useKecamatans(address.kabupaten)
-        const { data: kelurahans } = useKelurahans(address.kecamatan)
-
-        // get province name
-        const provinceName = useMemo(
-            () =>
-                provinces?.find((p) => p.code === address.provinsi)?.name || '',
-            [address.provinsi, provinces]
-        )
-        // get kabupaten name
-        const kabupatenName = useMemo(
-            () =>
-                kabupatens?.find((p) => p.code === address.kabupaten)?.name ||
-                '',
-            [address.kabupaten, kabupatens]
-        )
-        // get kecamatan name
-        const kecamatanName = useMemo(
-            () =>
-                kecamatans?.find((k) => k.code === address.kecamatan)?.name ||
-                '',
-            [kecamatans, address.kecamatan]
-        )
-        // get kelurahan name
-        const kelurahanName = useMemo(
-            () =>
-                kelurahans?.find((k) => k.code === address.kelurahan)?.name ||
-                '',
-            [kelurahans, address.kelurahan]
-        )
-
         // SET MAIN ADDRESS
         const { isPending, openMenuAction, setMainAddress, setOpenMenuAction } =
             useSetPrimaryAddress()
@@ -89,7 +49,7 @@ const AddressList = memo(
                         addressId: address.id,
                     })
                 }
-                variant={`relative py-5 hover:cursor-pointer flex flex-col gap-3 w-full col-span-12 lg:col-span-6 h-full p-2  group rounded-md transition-all duration-300 
+                variant={`relative py-2 hover:cursor-pointer flex flex-col gap-3 w-full col-span-12 lg:col-span-6 h-full p-2  group rounded-md transition-all duration-300 
                     ${isPending && 'cursor-wait animate-pulse'}
                     ${
                         address.is_primary == true
@@ -98,28 +58,39 @@ const AddressList = memo(
                     } `}
             >
                 <div className="flex-col gap-2 border-b text-sm">
-                    <h1>ID : {address.id}</h1>
                     <h1>Name : {user?.name}</h1>
-                    <h1>Phone Number : {user?.phone_number}</h1>
+                    <h1>Phone Number : (+62) {user?.phone_number}</h1>
                     <h1>Email : {user?.email}</h1>
                 </div>
 
                 <div className="flex flex-col text-sm">
                     <h1>
                         Provinsi :
-                        <span className="font-bold"> {provinceName}</span>
+                        <span className="font-bold">
+                            {' '}
+                            {address.provinsi_name}
+                        </span>
                     </h1>
                     <h1>
                         Kabupaten :
-                        <span className="font-bold"> {kabupatenName}</span>
+                        <span className="font-bold">
+                            {' '}
+                            {address.kabupaten_name}
+                        </span>
                     </h1>
                     <h1>
                         Kecamatan :
-                        <span className="font-bold"> {kecamatanName}</span>
+                        <span className="font-bold">
+                            {' '}
+                            {address.kecamatan_name}
+                        </span>
                     </h1>
                     <h1>
                         Kelurahan :
-                        <span className="font-bold"> {kelurahanName}</span>
+                        <span className="font-bold">
+                            {' '}
+                            {address.kelurahan_name}
+                        </span>
                     </h1>
                     <h1>
                         Postal Code :

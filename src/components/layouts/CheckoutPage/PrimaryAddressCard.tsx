@@ -4,16 +4,9 @@ import H1 from '../../elements/Title Header/H1'
 
 type primaryAddressProps = {
     primaryAddress: AddressType | undefined
-    wilayahName: {
-        provinsi: string | undefined
-        kabupaten: string | undefined
-        kecamatans: string | undefined
-        kelurahans: string | undefined
-    }
 }
 export default function PrimaryAddressCard({
     primaryAddress,
-    wilayahName,
 }: primaryAddressProps) {
     const { user } = useAuth()
     return (
@@ -46,25 +39,25 @@ export default function PrimaryAddressCard({
                         <H1 fontSize="text-sm">
                             Provinsi :{' '}
                             <span className="font-normal">
-                                {wilayahName.provinsi}
+                                {primaryAddress.provinsi_name}
                             </span>
                         </H1>
                         <H1 fontSize="text-sm">
                             Kabupaten :{' '}
                             <span className="font-normal">
-                                {wilayahName.kabupaten}
+                                {primaryAddress.kabupaten_name}
                             </span>
                         </H1>
                         <H1 fontSize="text-sm">
                             Kecamatan :{' '}
                             <span className="font-normal">
-                                {wilayahName.kecamatans}
+                                {primaryAddress.kecamatan_name}
                             </span>
                         </H1>
                         <H1 fontSize="text-sm">
                             Kelurahan :{' '}
                             <span className="font-normal">
-                                {wilayahName.kelurahans}
+                                {primaryAddress.kelurahan_name}
                             </span>
                         </H1>
                         <H1 fontSize="text-sm">

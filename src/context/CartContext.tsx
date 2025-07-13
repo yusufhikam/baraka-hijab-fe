@@ -45,6 +45,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
         queryKey: ['carts', isAuthenticated],
         queryFn: () => getDataCarts(isAuthenticated),
         enabled: true,
+        staleTime: 1000 * 60 * 5,
     })
 
     // console.log(carts);

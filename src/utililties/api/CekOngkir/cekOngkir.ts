@@ -31,8 +31,8 @@ export const cekOngkir = async ({
             courier,
         })
 
-        // console.log(res.data)
-        return res.data
+        // console.log(res.data.data)
+        return res.data.data
     } catch (error) {
         console.error(error)
         return []

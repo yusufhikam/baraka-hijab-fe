@@ -11,6 +11,8 @@ import CartsPage from '../pages/CartsPage'
 import SettingsPage from '../pages/SettingsPage'
 import CheckoutPage from '../pages/CheckoutPage'
 import GoogleCallbackPage from '../pages/GoogleCallbackPage'
+import TransactionSuccessPage from '../pages/TransactionSuccessPage'
+import TransactionsPage from '../pages/TransactionsPage'
 
 const router = createBrowserRouter([
     {
@@ -46,11 +48,27 @@ const router = createBrowserRouter([
                     </ProtectedRoute>
                 ),
             },
+            {
+                path: '/transactions',
+                element: (
+                    <ProtectedRoute allowedRoles="customer">
+                        <TransactionsPage />
+                    </ProtectedRoute>
+                ),
+            },
         ],
     },
     {
         path: '/admin/*',
         element: <AdminRoute />,
+    },
+    {
+        path: '/transaction/success',
+        element: (
+            <ProtectedRoute allowedRoles="customer">
+                <TransactionSuccessPage />
+            </ProtectedRoute>
+        ),
     },
     {
         path: '*',

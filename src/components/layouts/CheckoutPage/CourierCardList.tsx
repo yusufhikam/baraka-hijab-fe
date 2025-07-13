@@ -26,6 +26,7 @@ const CourierCardList = memo(
                 <div className="flex items-center gap-2">
                     <img
                         src={`/src/assets/images/logo/${courierLogo}`}
+                        // src={`/src/assets/images/logo/jne_logo.png`}
                         alt={`${courier.code}_logo`}
                     />
                     <h1>{courier.name}</h1>

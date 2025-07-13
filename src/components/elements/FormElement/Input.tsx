@@ -33,7 +33,7 @@ export default function Input({
                 <input
                     className={`w-full rounded-md ${variantClass} ${
                         isDarkMode
-                            ? 'focus:border-barakaprimary-dessert bg-zinc-800 focus:border-2 focus:shadow-md focus:ring-0 focus:shadow-amber-400/50'
+                            ? 'focus:border-barakaprimary-dessert bg-zinc-800 text-white focus:border-2 focus:shadow-md focus:ring-0 focus:shadow-amber-400/50'
                             : 'focus:border-2 focus:border-sky-500 focus:shadow-md focus:ring-0 focus:shadow-sky-400/50'
                     }`}
                     {...props}
