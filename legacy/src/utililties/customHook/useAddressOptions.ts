@@ -1,4 +1,4 @@
-import { getKecamatans } from './../api/CekOngkir/getKecamatan'
+import { getKecamatans } from '../api/CekOngkir/getKecamatan'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { getProvince } from '../api/CekOngkir/getProvince'
 import { getKabupaten } from '../api/CekOngkir/getKabupaten'
