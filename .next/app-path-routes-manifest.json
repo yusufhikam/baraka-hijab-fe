@@ -1,0 +1,20 @@
+{
+  "/(protected)/checkout/page": "/checkout",
+  "/(protected)/checkout/success/page": "/checkout/success",
+  "/(protected)/user/dashboard/@userAddress/page": "/user/dashboard",
+  "/(protected)/user/dashboard/page": "/user/dashboard",
+  "/(protected)/user/page": "/user",
+  "/(protected)/user/settings/page": "/user/settings",
+  "/(protected)/user/transactions/page": "/user/transactions",
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/auth/login/page": "/auth/login",
+  "/auth/register/page": "/auth/register",
+  "/carts/page": "/carts",
+  "/favicon.ico/route": "/favicon.ico",
+  "/oauth/google/callback/page": "/oauth/google/callback",
+  "/page": "/",
+  "/sample/page": "/sample",
+  "/store/[slug]/page": "/store/[slug]",
+  "/store/page": "/store"
+}

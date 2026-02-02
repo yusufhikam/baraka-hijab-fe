@@ -1,0 +1,3 @@
+{
+  "/(protected)/checkout/success/page": "app/(protected)/checkout/success/page.js"
+}

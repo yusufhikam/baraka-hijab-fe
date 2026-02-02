@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../../../../nextjs/app/%28protected%29/user/page.tsx"],"sourcesContent":["import { redirect } from \"next/navigation\";\r\n\r\nexport default function RedirectToUserDashboard() {\r\n  redirect(\"/user/dashboard\");\r\n}\r\n"],"names":[],"mappings":"2VAAA,EAAA,CAAA,CAAA,OAAA,IAAA,EAAA,EAAA,CAAA,CAAA,OAEe,SAAS,IACtB,CAAA,EAAA,EAAA,QAAA,AAAQ,EAAC,kBACX"}

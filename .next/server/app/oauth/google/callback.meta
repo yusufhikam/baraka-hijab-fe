@@ -1,0 +1,17 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/oauth/layout,_N_T_/oauth/google/layout,_N_T_/oauth/google/callback/layout,_N_T_/oauth/google/callback/page,_N_T_/oauth/google/callback"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/oauth/google/callback/__PAGE__",
+    "/oauth/google/callback",
+    "/oauth/google",
+    "/oauth",
+    "/_index",
+    "/_head"
+  ]
+}

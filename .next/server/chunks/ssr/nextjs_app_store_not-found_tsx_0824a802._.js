@@ -1,0 +1,3 @@
+module.exports=[39805,a=>{"use strict";var b=a.i(93322);function c(){return(0,b.jsx)("main",{className:"flex h-dvh w-full items-center justify-center text-black",children:(0,b.jsxs)("div",{className:"font-geist inline-flex h-1/4 w-1/2 items-center justify-between text-center font-semibold",children:[(0,b.jsx)("h2",{className:"text-4xl sm:text-8xl",children:"404"}),(0,b.jsx)("hr",{className:"h-full ring"}),(0,b.jsxs)("h1",{className:"text-3xl sm:text-5xl",children:["We're Sorry.",(0,b.jsx)("br",{}),"Product Not Found"]})]})})}a.s(["default",()=>c])}];
+
+//# sourceMappingURL=nextjs_app_store_not-found_tsx_0824a802._.js.map

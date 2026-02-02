@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../../../../nextjs/app/%28protected%29/user/dashboard/page.tsx"],"sourcesContent":["const UserDashboardPage = () => {\r\n  return <main className=\"my-20 px-5\">UserDashboardPage</main>;\r\n};\r\n\r\nexport default UserDashboardPage;\r\n"],"names":[],"mappings":"yEAA0B,IACjB,CAAA,EAAA,EAAA,GAAA,EAAC,OAAA,CAAK,UAAU,sBAAa"}
