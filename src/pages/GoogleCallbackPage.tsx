@@ -16,7 +16,6 @@ export default function GoogleCallbackPage() {
                 <div className="loader">
                     <Loader2 className="animate-spin" />
                 </div>{' '}
-                {/* Add your loader here */}
             </div>
         </div>
     )

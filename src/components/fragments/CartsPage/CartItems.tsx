@@ -84,7 +84,7 @@ const CartItems = memo(() => {
                                                         {
                                                             cart.productVariant
                                                                 .product
-                                                                .subCategory
+                                                                .sub_category
                                                                 .category.name
                                                         }
                                                     </h1>

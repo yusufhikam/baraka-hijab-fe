@@ -64,20 +64,20 @@ export const ModalQuickView = memo(
                             <p className="flex gap-1 text-xs text-black/30">
                                 Categories:
                                 <Link
-                                    to={`/shop/products?page=1&category=${selectedProductQuickView.subCategory.category.name}`}
+                                    to={`/shop/products?page=1&category=${selectedProductQuickView.sub_category.category.name}`}
                                     className="hover:text-black"
                                 >
                                     {
-                                        selectedProductQuickView.subCategory
+                                        selectedProductQuickView.sub_category
                                             .category.name
                                     }
                                 </Link>
                                 /
                                 <Link
-                                    to={`/shop/products?page=1&subCategory=${selectedProductQuickView.subCategory.name}`}
+                                    to={`/shop/products?page=1&subCategory=${selectedProductQuickView.sub_category.name}`}
                                     className="hover:text-black"
                                 >
-                                    {selectedProductQuickView.subCategory.name}
+                                    {selectedProductQuickView.sub_category.name}
                                 </Link>
                             </p>
                         </div>
@@ -112,7 +112,7 @@ export const ModalQuickView = memo(
                             <div
                                 className={`flex flex-col gap-y-5 ${modalQuickView ? 'block' : 'hidden'}`}
                             >
-                                {selectedProductQuickView.productVariants.map(
+                                {selectedProductQuickView.product_variants.map(
                                     (variant) => (
                                         <div
                                             key={variant.id}
