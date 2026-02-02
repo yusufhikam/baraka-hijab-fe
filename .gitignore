@@ -42,4 +42,14 @@ next-env.d.ts
 
 
 # Legacy React app (optional - keep node_modules ignored)
-legacy/
+# legacy/
+
+
+legacy/node_modules/
+legacy/.env
+legacy/.env.local
+legacy/.env.*.local
+legacy/.next/
+legacy/dist/
+legacy/build/
+legacy/public/build/
