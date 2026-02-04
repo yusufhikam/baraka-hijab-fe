@@ -83,7 +83,7 @@ export default function DetailBillingCart({
           disabled={isLoading}
           size={"lg"}
           className={cn(
-            "bg-baraka-primary-300 hover:bg-baraka-lightgreen-200 w-full cursor-pointer font-bold uppercase",
+            "bg-baraka-primary-300 hover:bg-baraka-lightgreen-200 w-full cursor-pointer rounded-xs font-bold uppercase",
             isLoading && "animate-pulse cursor-wait",
           )}
           onClick={handleCartPrepareCheckout}
@@ -102,7 +102,7 @@ export default function DetailBillingCart({
             asChild
             size={"lg"}
             variant={"outline"}
-            className="hover:bg-baraka-lightgreen-200 border-baraka-lightgreen-200 w-full border font-bold hover:text-white"
+            className="hover:bg-baraka-lightgreen-200 border-baraka-lightgreen-200 w-full rounded-xs border font-bold hover:text-white"
           >
             <Link href={"/carts"}>View Cart Page</Link>
           </Button>

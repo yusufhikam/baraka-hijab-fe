@@ -24,13 +24,13 @@ const HeroSection = () => {
       <div className="m-auto flex flex-col justify-center gap-5">
         <h1
           data-animate="hero-section-title"
-          className="font-krona-one z-1 mt-20 text-center text-4xl text-balance text-shadow-lg/30 sm:text-4xl md:text-6xl"
+          className="font-krona-one z-1 mt-40 text-center text-4xl text-balance text-shadow-lg/30 sm:text-4xl md:text-6xl xl:text-7xl"
         >
           Feel Confident and Beautiful in Every Outfit
         </h1>
         <p
           data-animate="hero-section-subtitle"
-          className="font-krub z-1 m-auto mt-5 w-4/5 text-center text-sm text-wrap text-shadow-lg/30 sm:text-base md:w-2/5"
+          className="font-krub z-1 m-auto mt-5 w-4/5 text-center text-sm text-wrap text-shadow-lg/30 sm:text-xl md:w-2/5 lg:w-2/3 xl:w-1/2 xl:text-2xl"
         >
           Our Muslimah clothing collection is thoughtfully designed to help you
           express your unique style while staying true to your values.

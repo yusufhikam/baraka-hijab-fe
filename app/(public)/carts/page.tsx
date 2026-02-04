@@ -23,7 +23,7 @@ export default function CartPage() {
 
       <Link
         href={"/store"}
-        className="font-geist mx-auto mt-20 inline-flex w-full items-center justify-center gap-4 rounded-md bg-black px-4 py-2 font-bold text-white hover:bg-zinc-800 sm:mt-10 sm:w-fit"
+        className="font-geist mx-auto mt-20 inline-flex w-full items-center justify-center gap-4 rounded-xs bg-black px-4 py-2 font-bold text-white hover:bg-zinc-800 sm:mt-10 sm:w-fit"
       >
         <CircleArrowLeft size={25} /> CONTINUE SHOPPING
       </Link>

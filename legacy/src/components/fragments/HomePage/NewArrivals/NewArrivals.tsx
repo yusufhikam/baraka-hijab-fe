@@ -23,7 +23,7 @@ const NewArrivals = () => {
             {/* <h1 className="font-poppins-semibold">NEW ARRIVALS</h1> */}
             <div
                 id="main-content"
-                className={`bg- py-10 ${isDarkMode && 'relative bg-[url(assets/images/bg/bg-newArrival.jpg)]'}`}
+                className={`bg- py-10 ${isDarkMode && 'relative'}`}
             >
                 <div
                     className={`${isDarkMode && 'absolute right-0 bottom-0 left-0 h-full backdrop-blur-sm'}`}

@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Krona_One, Poppins, Krub } from "next/font/google";
+import { Geist, Krona_One, Poppins, Krub } from "next/font/google";
 import "./globals.css";
 import ReactQueryProvider from "@/lib/providers/TanstackQuery/QueryClient";
 import { Toaster } from "sonner";
 import ReduxProvider from "@/lib/providers/ReduxProvider";
 import Navbar from "@/components/common/Navbar";
 import LenisProvider from "@/lib/providers/lenis/LenisProvider";
-import Footer from "@/components/common/Footer";
 import CartSyncHandler from "@/lib/providers/CartProvider";
 import Script from "next/script";
 
@@ -89,7 +88,6 @@ export default function RootLayout({
               <CartSyncHandler />
               <Navbar />
               {children}
-              <Footer />
             </ReactQueryProvider>
             <Toaster />
           </ReduxProvider>

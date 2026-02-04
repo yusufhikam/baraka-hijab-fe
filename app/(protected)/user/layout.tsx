@@ -12,7 +12,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     <>
       {/* {children} */}
       <ProtectedRoutes allowedUsers="customer">
-        <main className="relative h-full bg-gray-200 py-16">
+        <main className="relative bg-zinc-200 py-16">
           <SidebarProvider>
             <AppSidebar />
             <section className="h-full w-full p-5">

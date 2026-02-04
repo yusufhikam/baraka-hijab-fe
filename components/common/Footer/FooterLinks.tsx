@@ -16,7 +16,7 @@ export default function FooterLinks({
   title,
 }: FooterLinksProps) {
   return (
-    <section className="font-krub">
+    <section className="">
       <h4 className="font-bold">{title}</h4>
       <div
         className={cn(
@@ -30,7 +30,7 @@ export default function FooterLinks({
             {showNavTitle && (
               <Link
                 href={item.href ?? "#"}
-                className="hover:text-baraka-primary-300"
+                className="hover:text-baraka-primary-300 text-white/50"
               >
                 {item.title}
               </Link>

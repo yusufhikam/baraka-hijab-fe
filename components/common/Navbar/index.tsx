@@ -20,7 +20,7 @@ export default function Navbar() {
   if (HIDDEN_ROUTES_SET.has(pathname)) return null;
 
   return (
-    <nav className="fixed top-0 z-10 flex w-dvw items-center justify-between bg-white px-5 py-2 shadow-md shadow-black/30">
+    <nav className="fixed top-0 z-10 flex w-full items-center justify-between bg-white px-5 py-2 shadow-md shadow-black/30">
       <div className="hidden items-center justify-between gap-5 lg:flex">
         {navLinks.map((item, idx) => (
           <Link href={item.href} key={idx} className="hover:text-">

@@ -67,6 +67,7 @@ export default function LenisProvider({
         smoothWheel: true,
         allowNestedScroll: true,
       }}
+      className="overflow-hidden"
     >
       {children}
     </ReactLenis>

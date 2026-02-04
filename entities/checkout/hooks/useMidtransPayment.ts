@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import useMidtransScript from "@/hooks/useMidtransScript";
 import { useQueryClient } from "@tanstack/react-query";
@@ -33,7 +34,7 @@ export default function useMidtransPayment() {
 
       return new Promise<void>((resolve, reject) => {
         window.snap.pay(snapToken, {
-          onSuccess: (result) => {
+          onSuccess: (result: any) => {
             setIsProcessing(false);
             // onSuccessCallback?.(result, order_id);
 
@@ -48,7 +49,7 @@ export default function useMidtransPayment() {
             });
             resolve();
           },
-          onError: (result) => {
+          onError: (result: any) => {
             setIsProcessing(false);
             // onErrorCallback?.(result);
 

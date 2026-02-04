@@ -37,7 +37,7 @@ const LoginPage = () => {
 
     return (
         // <div className="font-krona-one-regular flex h-screen items-center justify-center bg-linear-to-b from-zinc-600 via-zinc-900 to-zinc-700 text-white">
-        <div className="font-krona-one-regular flex h-screen items-center justify-center bg-[url('/src/assets/images/bg/bg-newArrival.jpg')] bg-cover text-white">
+        <div className="font-krona-one-regular flex h-screen items-center justify-center bg-cover text-white">
             <LoginLayout
                 register={register}
                 handleSubmit={handleSubmit}

@@ -5,7 +5,7 @@ export default function SubscribeSection() {
   return (
     <section
       data-animate="subs-section-wrapper"
-      className="text-shadow relative z-0 mt-20 min-h-[80dvh] w-full bg-white text-shadow-zinc-200 sm:mt-0 sm:p-5"
+      className="text-shadow relative z-0 mt-20 min-h-[80dvh] w-full overflow-hidden bg-white text-shadow-zinc-200 sm:mt-0 sm:p-5"
     >
       <ImageWithFallback
         src={"/images/bg-hjb-wu-12.jpg"}
